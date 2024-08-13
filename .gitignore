@@ -141,4 +141,6 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
+.guiasinventariobitwan-014a643817e6.json
+
 # End of https://www.toptal.com/developers/gitignore/api/node

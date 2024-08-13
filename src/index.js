@@ -10,5 +10,5 @@ const PORT = process.env.PORT_APP || 4003; // Establezco el puerto en el que se 
 
 app.listen(PORT,  () => {
   //console.log(`Servidor iniciado en el puerto ${IP_PRUEBAS}`);
-  console.log(`Servidor iniciado en el puerto http://${IP}:${PORT}`); 
+  //console.log(`Servidor iniciado en el puerto http://${IP}:${PORT}`); 
 });
