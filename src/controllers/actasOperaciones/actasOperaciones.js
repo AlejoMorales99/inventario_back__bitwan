@@ -266,6 +266,8 @@ async function putActualizarActaOperacionesAceptar(req, res)  {
       const idActaOperacion = req.body.idActaOperacion;
       const tecnico_o_administractivo = req.body.tecnico_o_administractivo;
      
+     
+
       const fechaActual = new Date();
       const anio = fechaActual.getFullYear();
       const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
