@@ -4,7 +4,7 @@ const {Router} = require('express');
 const {
         postActivosFijos,putActivosFijos,getActivosFijos,getOneActivoFijo,getCopySerial,
         getCopyMac,buscarActivoFijoMover,razonDeMovimiento,tipoDeEntrega,Bodegas,
-        postCrearActaDeMovimiento,getAllActaMovimientos, validarActa,getAllMovimientosTecnicos,getActivosFijosTecnicos,
+        postCrearActaDeMovimiento,getAllActaMovimientos, getActasDeMovimientoOperaciones, validarActa,getAllMovimientosTecnicos,getActivosFijosTecnicos,
         anularActa,buscarActivoFijoMoverTecnicos,getAllActas, postMovimientos,getRazonDeMovimientoTecnicos,
         getBodegasTecnicos,retiroCliente,retiroClienteEspecifico,ObtenerTecnicos,buscarRegistros,
         getBodegaAjusteInventario,getRazonesDeMovimiento,buscarRegistrosPorFechaAndServicio,getBodegaAjusteInventarioIngreso,cedulaTecnico,totalActivosFijosTecnicos,cambiarEstadoTecnico,inicio
@@ -98,6 +98,8 @@ router.get('/api/getAllActaMovimientos/:page/:itemsPerPage', getAllActaMovimient
 
 //ruta para obtener las actas de movimiento de los tecnicos
 router.get('/api/getAllMovimientosTecnicos/:nombreUsuario', getAllMovimientosTecnicos )
+
+router.get('/api/getActasDeMovimientoOperaciones/:numTercero/:numServicio' , getActasDeMovimientoOperaciones);
 
 //ruta para obtener las actas de moviento validadas
 router.get('/api/validarActa/:id/:servicio/:servicioSale/:nombres/:numeroTercero/:numTerceroCreoActa/:tipoMovimiento', validarActa )

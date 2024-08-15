@@ -2214,19 +2214,7 @@ const getRazonDeMovimientoTecnicos = async (req, res) => {
       razonMovimientocol='Retiro Traslado' or
       razonMovimientocol='Reconexion' or
       razonMovimientocol='Envio a Técnico' or
-      razonMovimientocol='Devolución a central' or
-      razonMovimientocol='Contrato TV Stick' or
-      razonMovimientocol='Contrato Único de Servicios Fijos' or
-      razonMovimientocol='Contrato - Migracion' or
-      razonMovimientocol='Fachada de la casa' or
-      razonMovimientocol='Marquilla-Instalación' or
-      razonMovimientocol='Marquilla-Reconexión' or
-      razonMovimientocol='Marquilla-Retiro' or
-      razonMovimientocol='Marquilla-Soporte'or
-      razonMovimientocol='Marquilla-Traslado Reconexión' or
-      razonMovimientocol='Marquilla-Traslado Retiro' or
-      razonMovimientocol='Marquilla-Traslado Instalación' or
-      razonMovimientocol='Paz y Salvo'`);
+      razonMovimientocol='Devolución a central'`);
 
         // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
         res.status(200).json(rows);
@@ -3008,6 +2996,47 @@ const getAllMovimientosTecnicos = async (req, res) => {
   }
 };
 
+const getActasDeMovimientoOperaciones = async (req, res) => {
+  try {
+
+    const token = req.headers.authorization.split(' ')[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    // Se llama a la función validarToken para verificar y obtener datos a partir del token.
+    const data = await validarToken(token);
+
+
+    if (data.code == 200) {
+      // Si el código de respuesta de la función validarToken es 200, se ejecuta el siguiente bloque de código.
+
+      const numeroTercero = req.params.numTercero
+      const numServicio = req.params.numServicio
+
+      const [rows] = await pool.query(`select idactaMovimiento,entraCliente,numTercero from actamovimiento where entraCliente = ? && numTercero = ? && estadoActaMov_idestadoActaMov = 1`, [numServicio, numeroTercero]);
+
+
+      // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
+      res.status(200).json(rows);
+    } else {
+      // Si el código de respuesta de la función validarToken no es 200, se imprime un mensaje de "Autorización inválida" en la consola y se devuelve un código de estado 401 con un mensaje indicando que el token es inválido.
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    // Si se produce un error durante la ejecución del código, se captura y se imprime en la consola. Se devuelve un código de estado 500 con un mensaje indicando que no se pudo establecer la conexión.
+    console.error(error);
+    res.status(500).json({
+      message: "Error no se pudo establecer la conexión",
+    });
+  }
+};
+
+
 const validarActa = async (req, res) => {
   try {
 
@@ -3134,7 +3163,7 @@ const validarActa = async (req, res) => {
             FROM movimiento 
             INNER JOIN actamovimiento ON movimiento.actaMovimiento_idactaMovimiento = actamovimiento.idactaMovimiento
             INNER JOIN activofijo ON movimiento.activoFijo_idactivoFijo = activofijo.idactivoFijo
-            WHERE actamovimiento.idServicioEntra = ? && actamovimiento.idServicioSale =? && estadoMovimiento=0 && actamovimiento.estadoActaMov_idestadoActaMov = 1  `, [servicioActivo[0].idServicio, servicioSaleActivo[0].idServicio]);
+            WHERE actamovimiento.idServicioEntra = ? && actamovimiento.idServicioSale =? && estadoMovimiento=0 && actamovimiento.estadoActaMov_idestadoActaMov = 1 && actamovimiento.idactaMovimiento = ?  `, [servicioActivo[0].idServicio, servicioSaleActivo[0].idServicio,id]);
 
           for (const movimiento of cantidadMovimientos) {
             await connection.query(
@@ -3818,6 +3847,7 @@ module.exports = {
   postCrearActaDeMovimiento,
   getAllActaMovimientos,
   getAllMovimientosTecnicos,
+  getActasDeMovimientoOperaciones,
   validarActa,
   anularActa,
   getActivosFijosTecnicos,
