@@ -166,7 +166,8 @@ async function postCrearActaOperaciones(req, res)  {
         const numServicioActa = req.body.NumServicioOperaciones;
         const usuarioCreoActa = req.body.tecnico;
         const descripcion = req.body.Descripcion;
-  
+        const idAgenda = req.body.idAgenda;
+
         const fechaActual = new Date();
         const anio = fechaActual.getFullYear();
         const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
@@ -214,7 +215,7 @@ async function postCrearActaOperaciones(req, res)  {
         
         try {
   
-          const condicion = await actasOperacionesModal.postCrearActaOperaciones(RazonMovimiento,numServicioActa,usuarioCreoActa,ImgGuia,descripcion,fechaFormateada);
+          const condicion = await actasOperacionesModal.postCrearActaOperaciones(RazonMovimiento,numServicioActa,usuarioCreoActa,ImgGuia,descripcion,fechaFormateada,idAgenda);
 
 
           if(condicion){

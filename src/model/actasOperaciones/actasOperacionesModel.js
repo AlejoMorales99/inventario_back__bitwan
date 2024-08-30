@@ -315,10 +315,10 @@ async function getAllActasOperacionesTecnicos(nombreTecnico) {
 }
 
 
-async function postCrearActaOperaciones(RazonMovimiento,numServicioActa,usuarioCreoActa,ImgGuia,descripcion,fechaFormateada) {
+async function postCrearActaOperaciones(RazonMovimiento,numServicioActa,usuarioCreoActa,ImgGuia,descripcion,fechaFormateada,idAgenda) {
 
     try {
-        await pool.query('insert into actasdeoperaciones (razonActaOperacion,estadoActaOperacion,numServicioActa,usuarioCreoActa,fechaCreacionActa,imgActa,descripcion) VALUES(?,?,?,?,?,?,?) ',[RazonMovimiento,1,numServicioActa,usuarioCreoActa,fechaFormateada,ImgGuia,descripcion]);
+        await pool.query('insert into actasdeoperaciones (razonActaOperacion,estadoActaOperacion,numServicioActa,usuarioCreoActa,fechaCreacionActa,imgActa,descripcion,idAgenda) VALUES(?,?,?,?,?,?,?,?) ',[RazonMovimiento,1,numServicioActa,usuarioCreoActa,fechaFormateada,ImgGuia,descripcion,idAgenda]);
         return true;
 
     } catch (error) {
