@@ -3093,6 +3093,12 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       let actaMigracionRetiroMovimiento;
       let actaMigracionOperacionesRetiro;
 
+      let actaTrasladoIntalacionMovimiento;
+      let actaTrasladoRetiroMovimiento;
+      let actaTrasladoIntalacionMarquilla;
+      let actaTrasladoRetiroMarquilla;
+
+
       if (tipoOperacion == "Solicitud de instalación") {
       
         const [actaInstalacionInicialMovimientoResult] = await pool.query(`
@@ -3146,62 +3152,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0) {
 
             actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0];
-            actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0];
+            actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0] ?? "vacio";
 
-            if (actaReconexionMovimiento.estadoActaMovimiento == 1 && actaReconexionMarquilla == undefined) {
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: "vacio"
-              });
-
-            } else if (actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla == undefined) {
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: "vacio"
-              });
-
-            } else if (actaReconexionMovimiento.estadoActaMovimiento == 3 && actaReconexionMarquilla == undefined) {
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: "vacio"
-              });
-
-
-
-            } else if (actaReconexionMovimiento.estadoActaMovimiento == 1 && actaReconexionMarquilla.estadoActaOperaciones == 1) {
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            } else if (actaReconexionMovimiento.estadoActaMovimiento == 1 && actaReconexionMarquilla.estadoActaOperaciones == 2) {
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla:  actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 1 && actaReconexionMarquilla.estadoActaOperaciones == 3){
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-
-
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 1){
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 2){
+            
+            if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 2){
 
               const agendaFinalizada = finalizarAgenda(token, idAgenda);
               console.log(agendaFinalizada);
@@ -3211,39 +3165,12 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
               });
 
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 3){
-
-              
+            }else{
               res.status(200).json({
                 actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla !== "vacio" ? actaReconexionMarquilla.estadoActaOperaciones : "vacio"
               });
-
-
-
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 3 && actaReconexionMarquilla.estadoActaOperaciones == 1){
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 3 && actaReconexionMarquilla.estadoActaOperaciones == 2){
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 3 && actaReconexionMarquilla.estadoActaOperaciones == 3){
-
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
-
-            }
+            } 
 
           } else {
             res.status(200).json({ message: "No se encontraron actas correspondientes de reconexion" });
@@ -3262,96 +3189,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
         if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0) {
 
-           actaRetiroMovimiento = actaRetiroMovimientoResult[0]
-           actaRetiroOperaciones = actaRetiroOperacionesResult[0]
+           actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
+           actaRetiroOperaciones = actaRetiroOperacionesResult[0]  ?? "vacio"
          
-          if(actaRetiroMovimiento == undefined){
-            actaRetiroMovimiento = {
-              estadoActaMovimiento: undefined
-            }
-          }
-
-          //-----------------------------------------------------------------------------------------------//
-          if(actaRetiroMovimiento.estadoActaMovimiento == 1 && actaRetiroOperaciones == undefined){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: "vacio"
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones == undefined){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: "vacio"
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 3 && actaRetiroOperaciones == undefined){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: "vacio"
-            });
-          //-------------------------------------------------------------------------------------//
-
-
-
-          //-----------------------------------------------------------------------------------------------//
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == undefined && actaRetiroOperaciones.estadoActaOperaciones == 1){
-
-            res.status(200).json({
-              actaRetiroMovimiento: "vacio",
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == undefined && actaRetiroOperaciones.estadoActaOperaciones == 2){
-
-            res.status(200).json({
-              actaRetiroMovimiento: "vacio",
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == undefined && actaRetiroOperaciones.estadoActaOperaciones == 3){
-
-            res.status(200).json({
-              actaRetiroMovimiento: "vacio",
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-          //-------------------------------------------------------------------------------//
-
-
-
-
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 1 && actaRetiroOperaciones.estadoActaOperaciones == 1){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 1 && actaRetiroOperaciones.estadoActaOperaciones == 2){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 1 && actaRetiroOperaciones.estadoActaOperaciones == 3){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 1){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2){
+          if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2){
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3361,34 +3202,11 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
             });
 
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 3){
-
+          } else{
             res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
+              actaRetiroMovimiento: actaRetiroMovimiento !== "vacio" ? actaRetiroMovimiento.estadoActaMovimiento : "vacio",
+              actaRetiroOperaciones: actaRetiroOperaciones !== "vacio" ? actaRetiroOperaciones.estadoActaOperaciones : "vacio"
             });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 3 && actaRetiroOperaciones.estadoActaOperaciones == 1){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 3 && actaRetiroOperaciones.estadoActaOperaciones == 2){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento.estadoActaMovimiento == 3 && actaRetiroOperaciones.estadoActaOperaciones == 3){
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
-            });
-
           }
 
       
@@ -3415,9 +3233,9 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
         if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length>0) {
 
-          actaMigracionInstalacionMovimiento = actaInstalacionMigracionResult[0];
-          actaMigracionRetiroMovimiento = actaRetiroMigracionResult[0];
-          actaMigracionOperacionesRetiro = actaInstalacionMarquillaMigracionResult[0]
+          actaMigracionInstalacionMovimiento = actaInstalacionMigracionResult[0] || "vacio";
+          actaMigracionRetiroMovimiento = actaRetiroMigracionResult[0] || "vacio";
+          actaMigracionOperacionesRetiro = actaInstalacionMarquillaMigracionResult[0] || "vacio"
 
           if(actaMigracionInstalacionMovimiento.estadoActaMovimiento == 2 && actaMigracionRetiroMovimiento.estadoActaMovimiento == 2 && actaMigracionOperacionesRetiro.estadoActaOperaciones == 2){
 
@@ -3444,6 +3262,64 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
         }else{
           res.status(200).json({ message: "No se encontraron actas correspondientes de migracion" });
         }
+
+      }else if(tipoOperacion == "Traslado"){
+
+        const [actaInstalacionTrasladoMovimiento] = await pool.query(`
+          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 2 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
+  
+          const [actaRetiroTrasladoMovimiento] = await pool.query(`
+          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 8 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
+  
+          const [actaInstalacionMarquillaTraslado] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 35 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+  
+          const [actaRetiroMarquillaTraslado] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 34 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
+            if(actaInstalacionTrasladoMovimiento.length>0 || actaRetiroTrasladoMovimiento.length>0 || actaInstalacionMarquillaTraslado.length>0 || actaRetiroMarquillaTraslado.length>0){
+             
+              actaTrasladoIntalacionMovimiento = actaInstalacionTrasladoMovimiento[0] || "vacio";
+              actaTrasladoRetiroMovimiento = actaRetiroTrasladoMovimiento[0] || "vacio";
+              actaTrasladoIntalacionMarquilla = actaInstalacionMarquillaTraslado[0] || "vacio";
+              actaTrasladoRetiroMarquilla = actaRetiroMarquillaTraslado[0] || "vacio";
+
+
+              if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else{
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }
+             
+            }else{
+              res.status(200).json({ message: "No se encontraron actas correspondientes de traslado" });
+            }
+
+
+       
 
       }else{
         res.status(200).json({ message: "No se encontro ese tipo de operacion" });
