@@ -3287,9 +3287,61 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaTrasladoRetiroMovimiento = actaRetiroTrasladoMovimiento[0] || "vacio";
               actaTrasladoIntalacionMarquilla = actaInstalacionMarquillaTraslado[0] || "vacio";
               actaTrasladoRetiroMarquilla = actaRetiroMarquillaTraslado[0] || "vacio";
-
+              
 
               if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 &&  actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio'){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio'){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2){
 
                 const agendaFinalizada = finalizarAgenda(token, idAgenda);
                 console.log(agendaFinalizada);
@@ -3320,6 +3372,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
 
        
+
+      }else if(tipoOperacion == "Soporte técnico Internet: Internet intermitente"){
+
+        res.status(200).json({mensaje:"prueba"})
 
       }else{
         res.status(200).json({ message: "No se encontro ese tipo de operacion" });
