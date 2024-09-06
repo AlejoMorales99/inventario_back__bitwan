@@ -3087,7 +3087,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
       let actaRetiroMovimiento;
       let actaRetiroOperaciones;
-
+      let actaFachadaCasa;
 
       let actaMigracionInstalacionMovimiento;
       let actaMigracionRetiroMovimiento;
@@ -3098,6 +3098,9 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       let actaTrasladoIntalacionMarquilla;
       let actaTrasladoRetiroMarquilla;
 
+      let actaSoporteInstalacionMovimiento;
+      let actaSoporteRetiroMovimiento;
+      let actaSoporteMarquilla;
 
       if (tipoOperacion == "Solicitud de instalación") {
       
@@ -3187,11 +3190,17 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 31 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0) {
+        const [actaFachadaCasaResult] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+ 
+        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length>0) {
 
            actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
            actaRetiroOperaciones = actaRetiroOperacionesResult[0]  ?? "vacio"
-         
+           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
+        
+
           if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2){
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
@@ -3199,13 +3208,26 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
             res.status(200).json({
               actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
+            });
+
+          }else if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+            res.status(200).json({
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
             });
 
           } else{
             res.status(200).json({
               actaRetiroMovimiento: actaRetiroMovimiento !== "vacio" ? actaRetiroMovimiento.estadoActaMovimiento : "vacio",
-              actaRetiroOperaciones: actaRetiroOperaciones !== "vacio" ? actaRetiroOperaciones.estadoActaOperaciones : "vacio"
+              actaRetiroOperaciones: actaRetiroOperaciones !== "vacio" ? actaRetiroOperaciones.estadoActaOperaciones : "vacio",
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
             });
           }
 
@@ -3373,9 +3395,90 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
        
 
-      }else if(tipoOperacion == "Soporte técnico Internet: Internet intermitente"){
+      }else if(
+        tipoOperacion == "Soporte técnico Internet: Internet intermitente" || 
+        tipoOperacion == 'Soporte técnico Internet: Otras fallas de intertnet' || 
+        tipoOperacion == 'Soporte técnico Internet: Internet lento' ||
+        tipoOperacion == 'Soporte técnico Internet: No hay internet' ||
+        tipoOperacion == 'Soporte técnico Internet: Mover WiFi'){
 
-        res.status(200).json({mensaje:"prueba"})
+        const [actaInstalacionSoporteMovimientoResult] = await pool.query(`
+          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 4 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
+  
+          const [actaRetiroSoporteMovimientoResult] = await pool.query(`
+          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 6 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
+  
+          const [actaSoporteMarquillaResult] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 32 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
+
+        if(actaInstalacionSoporteMovimientoResult.length>0 || actaRetiroSoporteMovimientoResult.length>0 || actaSoporteMarquillaResult.length>0){
+
+          actaSoporteInstalacionMovimiento = actaInstalacionSoporteMovimientoResult[0] || "vacio"
+          actaSoporteRetiroMovimiento = actaRetiroSoporteMovimientoResult[0] || "vacio"
+          actaSoporteMarquilla = actaSoporteMarquillaResult[0] || "vacio"
+
+      
+
+          if(actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla.estadoActaOperaciones == 2){
+            
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+                
+            res.status(200).json({
+              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+              
+            });
+
+          }else if(actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla == 'vacio'){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+                
+            res.status(200).json({
+              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+              
+            });
+
+          }else if(actaSoporteInstalacionMovimiento == 'vacio' && actaSoporteRetiroMovimiento == 'vacio' && actaSoporteMarquilla.estadoActaOperaciones == 2){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+                
+            res.status(200).json({
+              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+              
+            });
+
+          }else{
+            
+            res.status(200).json({
+              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+            });
+
+          }
+
+
+        }else{
+          res.status(200).json({ message: "No se encontraron actas correspondientes de soporte" });
+        }
+
+
+        
 
       }else{
         res.status(200).json({ message: "No se encontro ese tipo de operacion" });
