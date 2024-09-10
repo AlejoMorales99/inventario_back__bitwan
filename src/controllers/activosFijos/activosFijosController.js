@@ -3087,7 +3087,9 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
       let actaRetiroMovimiento;
       let actaRetiroOperaciones;
+      let actaOntRetiro;
       let actaFachadaCasa;
+      let actaCuadraCasaRetiro;
 
       let actaMigracionInstalacionMovimiento;
       let actaMigracionRetiroMovimiento;
@@ -3190,29 +3192,28 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 31 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+        const [actaOntRetiroResult] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 36 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
         const [actaFachadaCasaResult] = await pool.query(`
           SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
  
-        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length>0) {
+        const [actaCuadraCasaRetiroResult] = await pool.query(`
+          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
+        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length>0 || actaOntRetiroResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
 
            actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
            actaRetiroOperaciones = actaRetiroOperacionesResult[0]  ?? "vacio"
            actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
-        
+           actaOntRetiro =  actaOntRetiroResult[0] ?? "vacio";
 
-          if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2){
+           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
-            });
-
-          }else if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2){
+           if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones== "vacio" && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2){
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3220,25 +3221,71 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             res.status(200).json({
               actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
               actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
             });
 
-          } else{
+
+           }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones== "vacio" && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio"){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
             res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento !== "vacio" ? actaRetiroMovimiento.estadoActaMovimiento : "vacio",
-              actaRetiroOperaciones: actaRetiroOperaciones !== "vacio" ? actaRetiroOperaciones.estadoActaOperaciones : "vacio",
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
             });
-          }
 
-      
+           }else if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+            res.status(200).json({
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
+            });
+
+           }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio"){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+            res.status(200).json({
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
+            });
+
+           }else{
+
+            res.status(200).json({
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
+            });
+
+           }
+          
+          
+          
 
         }else{
           res.status(200).json({ message: "No se encontraron actas correspondientes de retiro" });
         }
 
 
-       
       }else if(tipoOperacion == "Migración"){
 
         const [actaInstalacionMigracionResult] = await pool.query(`
