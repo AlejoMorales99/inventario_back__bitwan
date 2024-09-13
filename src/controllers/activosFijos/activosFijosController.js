@@ -3079,6 +3079,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
       let actaInstalacionInicialMovimiento;
       let actaInstalacionInicialMarquilla;
+      let actaContractoInstalacion;
 
 
       let actaReconexionMovimiento;
@@ -3107,33 +3108,59 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       if (tipoOperacion == "Solicitud de instalación") {
       
         const [actaInstalacionInicialMovimientoResult] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 1 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
         const [actaInstalacionInicialMarquillaResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 29 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+        const [actaInstalacionContractoResult] = await pool.query(`
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          WHERE idAgenda = ? AND razonActaOperacion = 25 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
         // Verifica que haya resultados antes de intentar acceder a las propiedades
-        if (actaInstalacionInicialMovimientoResult.length > 0 && actaInstalacionInicialMarquillaResult.length > 0) {
-          actaInstalacionInicialMovimiento = actaInstalacionInicialMovimientoResult[0];
-          actaInstalacionInicialMarquilla = actaInstalacionInicialMarquillaResult[0];
+        if (actaInstalacionInicialMovimientoResult.length > 0 || actaInstalacionInicialMarquillaResult.length > 0 ||  actaInstalacionContractoResult.length>0) {
 
+          actaInstalacionInicialMovimiento = actaInstalacionInicialMovimientoResult[0] ?? "vacio";
+          actaInstalacionInicialMarquilla = actaInstalacionInicialMarquillaResult[0] ?? "vacio";
+          actaContractoInstalacion = actaInstalacionContractoResult[0] ??"vacio";
 
-          if (actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2) {
+  
+
+          if (actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2 && actaContractoInstalacion == "vacio") {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
 
             res.status(200).json({
               actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
-              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones
+              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
+              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones,
+
+            });
+
+          }else if(actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2 && actaContractoInstalacion.estadoActaOperaciones == 2){
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+            res.status(200).json({
+              actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
+              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
+              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones
             });
 
           }else{
             res.status(200).json({
               actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
-              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones
+              actaDeInstalacionMensajeRecha: actaInstalacionInicialMovimiento.obsActaRecha,
+
+              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
+              actasDeInstalacionMarquillaMensajeRecha: actaInstalacionInicialMarquilla.obsActaRecha,
+
+              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones,
+              actasContractoInstalacionMensajeRecha: actaContractoInstalacion.obsActaRecha
             });
           }
 
@@ -3156,7 +3183,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
           if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0) {
 
-            actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0];
+            actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0] ?? "vacio";
             actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0] ?? "vacio";
 
             
@@ -3170,10 +3197,30 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
               });
 
+            }else if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla == 'vacio'){
+
+              const agendaFinalizada = finalizarAgenda(token, idAgenda);
+              console.log(agendaFinalizada);
+
+              res.status(200).json({
+                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+              });
+
+            }else if(actaReconexionMovimiento == 'vacio' && actaReconexionMarquilla.estadoActaOperaciones == 2){
+
+              const agendaFinalizada = finalizarAgenda(token, idAgenda);
+              console.log(agendaFinalizada);
+
+              res.status(200).json({
+                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+              });
+
             }else{
               res.status(200).json({
                 actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla !== "vacio" ? actaReconexionMarquilla.estadoActaOperaciones : "vacio"
+                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
               });
             } 
 
