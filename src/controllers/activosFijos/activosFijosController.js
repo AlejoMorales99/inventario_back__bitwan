@@ -3172,11 +3172,11 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
         
           const [actaInstalacionReconexionMovimientoResult] = await pool.query(`
-            SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+            SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
             WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 19 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
           const [actaInstalacionRexonexionMarquillaResult] = await pool.query(`
-            SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 30 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
            
@@ -3220,7 +3220,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             }else{
               res.status(200).json({
                 actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                 actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+                actasDeReconexionMovimientoMensajeRecha: actaReconexionMovimiento.obsActaRecha,
+
+                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones,
+                actasDeOperacionesReconexionMarquillaMensajeRecha: actaReconexionMarquilla.obsActaRecha
               });
             } 
 
@@ -3232,23 +3235,23 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       }else if(tipoOperacion == "Terminación del contrato cancelación del servicio"){
        
         const [actaRetiroMovimientoResult] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 5 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
         const [actaRetiroOperacionesResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 31 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         const [actaOntRetiroResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 36 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         const [actaFachadaCasaResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
  
         const [actaCuadraCasaRetiroResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length>0 || actaOntRetiroResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
@@ -3317,10 +3320,19 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
             res.status(200).json({
               actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroMovimientoMensajeRecha: actaRetiroMovimiento.obsActaRecha,
+
               actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaRetiroOperacionesMensajeRecha: actaRetiroOperaciones.obsActaRecha,
+
               actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaOntRetiroMensajeRecha: actaOntRetiro.obsActaRecha,
+
               actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
+              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
             });
 
            }
@@ -3336,15 +3348,15 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       }else if(tipoOperacion == "Migración"){
 
         const [actaInstalacionMigracionResult] = await pool.query(`
-        SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+        SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
         WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 3 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
         const [actaRetiroMigracionResult] = await pool.query(`
-        SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+        SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
         WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 7 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
         const [actaInstalacionMarquillaMigracionResult] = await pool.query(`
-        SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+        SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
         WHERE idAgenda = ? AND razonActaOperacion = 29 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length>0) {
@@ -3368,8 +3380,13 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
             res.status(200).json({
               actaMigracionInstalacionMovimiento: actaMigracionInstalacionMovimiento.estadoActaMovimiento,
+              actaMigracionInstalacionMovimientoMensajeRecha: actaMigracionInstalacionMovimiento.obsActaRecha,
+
               actaMigracionRetiroMovimiento: actaMigracionRetiroMovimiento.estadoActaMovimiento,
-              actaMigracionOperacionesRetiro: actaMigracionOperacionesRetiro.estadoActaOperaciones
+              actaMigracionRetiroMovimientoMensajeRecha: actaMigracionRetiroMovimiento.obsActaRecha,
+
+              actaMigracionOperacionesRetiro: actaMigracionOperacionesRetiro.estadoActaOperaciones,
+              actaMigracionOperacionesRetiroMensajeRecha: actaMigracionOperacionesRetiro.obsActaRecha
             });
 
 
@@ -3382,19 +3399,19 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       }else if(tipoOperacion == "Traslado"){
 
         const [actaInstalacionTrasladoMovimiento] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 2 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
   
           const [actaRetiroTrasladoMovimiento] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 8 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
   
           const [actaInstalacionMarquillaTraslado] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 35 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
   
           const [actaRetiroMarquillaTraslado] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 34 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
             if(actaInstalacionTrasladoMovimiento.length>0 || actaRetiroTrasladoMovimiento.length>0 || actaInstalacionMarquillaTraslado.length>0 || actaRetiroMarquillaTraslado.length>0){
@@ -3470,7 +3487,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
                   actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
                 });
 
-              }else{
+              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio'){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
 
                 
                 res.status(200).json({
@@ -3478,6 +3498,36 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
                   actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
                   actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
                   actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento == 'vacio'){
+
+                const agendaFinalizada = finalizarAgenda(token, idAgenda);
+                console.log(agendaFinalizada);
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
+                });
+
+              }else{
+
+                
+                res.status(200).json({
+                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+                  actaTrasladoIntalacionMovimientoMensajeRecha: actaTrasladoIntalacionMovimiento.obsActaRecha,
+
+                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+                  actaTrasladoRetiroMovimientoMensajeRecha: actaTrasladoRetiroMovimiento.obsActaRecha,
+
+                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+                  actaTrasladoIntalacionMarquillaMensajeRecha: actaTrasladoIntalacionMarquilla.obsActaRecha,
+
+                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones,
+                  actaTrasladoRetiroMarquillaMensajeRecha:actaTrasladoRetiroMarquilla.obsActaRecha 
                 });
 
               }
@@ -3497,15 +3547,15 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
         tipoOperacion == 'Soporte técnico Internet: Mover WiFi'){
 
         const [actaInstalacionSoporteMovimientoResult] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 4 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
   
           const [actaRetiroSoporteMovimientoResult] = await pool.query(`
-          SELECT estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
+          SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 6 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
   
           const [actaSoporteMarquillaResult] = await pool.query(`
-          SELECT estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+          SELECT obsActaRecha , estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 32 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
 
@@ -3560,8 +3610,13 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             
             res.status(200).json({
               actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteInstalacionMovimientoMensajeRecha: actaSoporteInstalacionMovimiento.obsActaRecha,
+
               actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+              actaSoporteRetiroMovimientoMensajeRecha: actaSoporteRetiroMovimiento.obsActaRecha,
+
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
+              actaSoporteMarquillaMensajeRecha: actaSoporteMarquilla.obsActaRecha
             });
 
           }
