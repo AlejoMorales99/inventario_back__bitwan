@@ -100,7 +100,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+          referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -108,13 +108,37 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where numeroActivo = ? order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};`, buscar);
+
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+            referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where numeroActivo = ? order by idactivoFijo desc`, buscar);
+  
 
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where numeroActivo = ?', buscar);
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
 
         }
@@ -133,7 +157,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+         referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -141,15 +165,40 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE activofijo.serial LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]
+          );
+
+          const [rowsTotal] = await pool.query(
+            `select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+         referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE activofijo.serial LIKE ? ORDER BY idactivoFijo DESC `, [`%${buscar}%`]
 
           );
 
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where activofijo.serial LIKE ? ', [`%${buscar}%`]);
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
 
 
@@ -170,7 +219,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+          referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -178,13 +227,36 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where MAC = ? order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};`, buscar);
+
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+            referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where MAC = ? order by idactivoFijo desc `, buscar);
 
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where MAC = ?', buscar);
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
         }
 
@@ -201,7 +273,7 @@ const buscarRegistros = async (req, res) => {
         estadouso.estadoUsocol AS estado ,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+        referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -209,13 +281,36 @@ const buscarRegistros = async (req, res) => {
         inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
         inner join estadouso on idestadoUso = estadoUso_idestadoUso
         inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+        INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso = ? order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};`, buscar);
+
+        const [rowsTotal] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso = ? order by idactivoFijo desc`, buscar);
 
         const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where fechaIngreso = ?', buscar);
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else if (columna == "Descripcion") {
@@ -229,7 +324,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+          referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -237,13 +332,89 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE descripcion LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
+
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+            referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE descripcion LIKE ? ORDER BY idactivoFijo DESC`, [`%${buscar}%`]);
 
         const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where descripcion LIKE ? ', [`%${buscar}%`]);
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
+        });
+
+      } else if (columna == "referencia") {
+
+        const [rows] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, 
+          DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE referencia.nombre LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
+
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, 
+            DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+            referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE referencia.nombre LIKE ? ORDER BY idactivoFijo DESC `, [`%${buscar}%`]);
+
+        const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo  inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia where referencia.nombre LIKE ? ', [`%${buscar}%`]);
+        res.status(200).json({
+          data: rows,
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else if (columna == "categoria") {
@@ -256,7 +427,7 @@ const buscarRegistros = async (req, res) => {
         estadouso.estadoUsocol AS estado,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+       referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -264,15 +435,38 @@ const buscarRegistros = async (req, res) => {
     INNER JOIN categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
     INNER JOIN estadouso ON idestadoUso = estadoUso_idestadoUso
     INNER JOIN proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
+    INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
     LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
     LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero 
     WHERE categoriainv.nombre LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
+
+    const [rowsTotal] = await pool.query(`SELECT 
+      idactivoFijo, numeroActivo, activofijo.serial, MAC,
+      descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
+      DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
+      categoriainv.nombre as categoria, 
+      estadouso.estadoUsocol AS estado,
+      proveedorinven.nombre as proveedor,
+      tercero.tercerocol as servicio,
+     referencia.nombre as referencia,
+      usuario,
+      usuarioModifica,
+      servicio_Cliente
+  FROM activofijo
+  INNER JOIN categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+  INNER JOIN estadouso ON idestadoUso = estadoUso_idestadoUso
+  INNER JOIN proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
+  INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+  LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+  LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero 
+  WHERE categoriainv.nombre LIKE ? ORDER BY idactivoFijo DESC`, [`%${buscar}%`]);
 
         const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo inner join categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
        where categoriainv.nombre LIKE ?` , [`%${buscar}%`]);
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else if (columna == "estado") {
@@ -285,7 +479,7 @@ const buscarRegistros = async (req, res) => {
         estadouso.estadoUsocol AS estado ,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+        referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -293,18 +487,43 @@ const buscarRegistros = async (req, res) => {
         inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
         inner join estadouso on idestadoUso = estadoUso_idestadoUso
         inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+        INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
         where  estadouso.estadoUsocol LIKE ?  order by idactivoFijo desc  LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
+
+        const [rowsTotal] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
+          where  estadouso.estadoUsocol LIKE ?  order by idactivoFijo desc`, [`%${buscar}%`]);
 
         const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo inner join estadouso on idestadoUso = estadoUso_idestadoUso
         where estadouso.estadoUsocol LIKE ?` , [`%${buscar}%`]);
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else if (columna == "proveedor") {
+
         const [rows] = await pool.query(`select 
         idactivoFijo, numeroActivo, 
         activofijo.serial, MAC,
@@ -314,7 +533,7 @@ const buscarRegistros = async (req, res) => {
         estadouso.estadoUsocol AS estado ,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+        referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -322,15 +541,39 @@ const buscarRegistros = async (req, res) => {
         inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
         inner join estadouso on idestadoUso = estadoUso_idestadoUso
         inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+        INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
         where  proveedorinven.nombre  LIKE ? order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
+
+        const [rowsTotal] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
+          where  proveedorinven.nombre  LIKE ? order by idactivoFijo desc`, [`%${buscar}%`]);
 
         const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo   inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
         where proveedorinven.nombre LIKE ?` , [`%${buscar}%`]);
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else if (columna == "razon de movimiento") {
@@ -1040,7 +1283,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+          referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -1048,14 +1291,38 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where servicio_idservicio = 2 order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};
           `);
 
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+            referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where servicio_idservicio = 2 order by idactivoFijo desc ;
+            `);
+
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where servicio_idservicio = 2');
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
 
         } else if (buscar == "alcala2") {
@@ -1069,7 +1336,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+        referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -1077,14 +1344,38 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where servicio_idservicio = 3 order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};
           `);
 
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where servicio_idservicio = 3 order by idactivoFijo desc ;
+            `);
+
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where servicio_idservicio = 3');
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
 
 
@@ -1099,7 +1390,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
-          referencia_idreferencia as referencia,
+         referencia.nombre as referencia,
           usuario,
           usuarioModifica,
           servicio_Cliente
@@ -1107,9 +1398,32 @@ const buscarRegistros = async (req, res) => {
           inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
           inner join estadouso on idestadoUso = estadoUso_idestadoUso
           inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
           where tercero.tercerocol LIKE ? || servicio_Cliente  LIKE ?  order by idactivoFijo desc LIMIT ${offset}, ${itemsPerPage};`, [[`%${buscar}%`], [`%${buscar}%`]]);
+
+          const [rowsTotal] = await pool.query(`select 
+            idactivoFijo, numeroActivo, 
+            activofijo.serial, MAC,
+            descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+            DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+            categoriainv.nombre as categoria , 
+            estadouso.estadoUsocol AS estado ,
+            proveedorinven.nombre as proveedor,
+            tercero.tercerocol as servicio,
+           referencia.nombre as referencia,
+            usuario,
+            usuarioModifica,
+            servicio_Cliente
+            from activofijo
+            inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+            inner join estadouso on idestadoUso = estadoUso_idestadoUso
+            inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+            INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+            LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+            LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero 
+            where tercero.tercerocol LIKE ? || servicio_Cliente  LIKE ?  order by idactivoFijo desc`, [[`%${buscar}%`], [`%${buscar}%`]]);
 
           const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo 
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
@@ -1117,7 +1431,8 @@ const buscarRegistros = async (req, res) => {
           where tercero.tercerocol LIKE ?  || servicio_Cliente  LIKE ?`, [[`%${buscar}%`], [`%${buscar}%`],]);
           res.status(200).json({
             data: rows,
-            total: totalItems
+            total: totalItems,
+            totalReporte:rowsTotal
           });
         }
 
@@ -1181,7 +1496,7 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         estadouso.estadoUsocol AS estado ,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+       referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -1189,6 +1504,7 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
         inner join estadouso on idestadoUso = estadoUso_idestadoUso
         inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+        INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso >= ? && fechaIngreso <= ? LIMIT ${offset}, ${itemsPerPage};`, [fechaInicio, fechaFin]);
 
@@ -1208,7 +1524,7 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         estadouso.estadoUsocol AS estado ,
         proveedorinven.nombre as proveedor,
         tercero.tercerocol as servicio,
-        referencia_idreferencia as referencia,
+        referencia.nombre as referencia,
         usuario,
         usuarioModifica,
         servicio_Cliente
@@ -1216,6 +1532,7 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
         inner join estadouso on idestadoUso = estadoUso_idestadoUso
         inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+        INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where (tercerocol = ? || servicio_Cliente=? ) && fechaIngreso >= ? && fechaIngreso <= ? LIMIT ${offset}, ${itemsPerPage}; `, [servicio, servicio, fechaInicio, fechaFin]);
 
@@ -1248,6 +1565,88 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
     });
   }
 };
+
+const buscarRegistrosPorReferenciaBodega = async (req, res) => {
+
+  try {
+
+    const token = req.headers.authorization.split(' ')[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    // Se llama a la función validarToken para verificar y obtener datos a partir del token.
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+      // Si el código de respuesta de la función validarToken es 200, se ejecuta la siguiente consulta SQL y se obtiene el resultado.
+
+      const servicio = req.params.servicio;
+      const valoresReferencia = req.params.valoresReferencia.split(',');
+      const placeholders = valoresReferencia.map(() => '?').join(',');
+
+    
+
+      const page = parseInt(req.params.page) || 1; // Página actual
+      const itemsPerPage = parseInt(req.params.itemPerPage) || 10;
+      const offset = (page - 1) * itemsPerPage;
+
+      const [rows] = await pool.query(`SELECT 
+        idactivoFijo, numeroActivo, 
+        activofijo.serial, MAC,
+        descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
+        DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
+        categoriainv.nombre AS categoria, 
+        estadouso.estadoUsocol AS estado,
+        proveedorinven.nombre AS proveedor,
+        tercero.tercerocol AS servicio,
+        referencia.nombre AS referencia,
+        usuario,
+        usuarioModifica,
+        servicio_Cliente
+    FROM activofijo
+    INNER JOIN categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+    INNER JOIN estadouso ON idestadoUso = estadoUso_idestadoUso
+    INNER JOIN proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
+    INNER JOIN referencia ON referencia.idreferencia = activofijo.referencia_idreferencia
+    LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+    LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero
+    WHERE (tercero.tercerocol = ? OR servicio_Cliente = ?) 
+    AND referencia.idreferencia IN (${placeholders}) 
+    LIMIT ${offset}, ${itemsPerPage};`,
+        [servicio, servicio, ...valoresReferencia]);
+
+      const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo 
+          INNER JOIN referencia ON referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+          LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero
+          WHERE (tercero.tercerocol = ? OR servicio_Cliente = ?) 
+          AND referencia.idreferencia IN (${placeholders})`,
+        [servicio, servicio, ...valoresReferencia]);
+
+
+      res.status(200).json({
+        data: rows,
+        total: totalItems
+      });
+
+    } else {
+      // Si el código de respuesta de la función validarToken no es 200, se imprime un mensaje de "Autorización inválida" en la consola y se devuelve un código de estado 401 con un mensaje indicando que el token es inválido.
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    // Si se produce un error durante la ejecución del código, se captura y se imprime en la consola. Se devuelve un código de estado 500 con un mensaje indicando que no se pudo establecer la conexión.
+    console.error(error);
+    res.status(500).json({
+      message: "Error no se pudo establecer la conexión",
+    });
+  }
+};
+
 
 
 //funcion que obtiene todos los activos fijos de la base de datos
@@ -2790,7 +3189,7 @@ const postCrearActaDeMovimiento = async (req, res) => {
 
 
             const idActaMovimientos = rows.insertId; // Obtener el ID del último registro insertado
-           
+
             if (ServicioDelClienteEspecifico.length >= 1) {
 
 
@@ -3072,7 +3471,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
     if (data.code == 200) {
 
-      
+
 
       const idAgenda = req.params.idAgenda;
       const tipoOperacion = req.params.tipoOperacion;
@@ -3106,7 +3505,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       let actaSoporteMarquilla;
 
       if (tipoOperacion == "Solicitud de instalación") {
-      
+
         const [actaInstalacionInicialMovimientoResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 1 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
@@ -3120,13 +3519,13 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           WHERE idAgenda = ? AND razonActaOperacion = 25 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         // Verifica que haya resultados antes de intentar acceder a las propiedades
-        if (actaInstalacionInicialMovimientoResult.length > 0 || actaInstalacionInicialMarquillaResult.length > 0 ||  actaInstalacionContractoResult.length>0) {
+        if (actaInstalacionInicialMovimientoResult.length > 0 || actaInstalacionInicialMarquillaResult.length > 0 || actaInstalacionContractoResult.length > 0) {
 
           actaInstalacionInicialMovimiento = actaInstalacionInicialMovimientoResult[0] ?? "vacio";
           actaInstalacionInicialMarquilla = actaInstalacionInicialMarquillaResult[0] ?? "vacio";
-          actaContractoInstalacion = actaInstalacionContractoResult[0] ??"vacio";
+          actaContractoInstalacion = actaInstalacionContractoResult[0] ?? "vacio";
 
-  
+
 
           if (actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2 && actaContractoInstalacion == "vacio") {
 
@@ -3136,11 +3535,11 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             res.status(200).json({
               actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
               actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
-              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones,
+              actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones,
 
             });
 
-          }else if(actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2 && actaContractoInstalacion.estadoActaOperaciones == 2){
+          } else if (actaInstalacionInicialMovimiento.estadoActaMovimiento == 2 && actaInstalacionInicialMarquilla.estadoActaOperaciones == 2 && actaContractoInstalacion.estadoActaOperaciones == 2) {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3148,10 +3547,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             res.status(200).json({
               actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
               actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
-              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones
+              actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones
             });
 
-          }else{
+          } else {
             res.status(200).json({
               actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
               actaDeInstalacionMensajeRecha: actaInstalacionInicialMovimiento.obsActaRecha,
@@ -3159,7 +3558,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
               actasDeInstalacionMarquillaMensajeRecha: actaInstalacionInicialMarquilla.obsActaRecha,
 
-              actaContractoInstalacion:actaContractoInstalacion.estadoActaOperaciones,
+              actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones,
               actasContractoInstalacionMensajeRecha: actaContractoInstalacion.obsActaRecha
             });
           }
@@ -3170,70 +3569,70 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
       } else if (tipoOperacion == "Solicitud de conexión (por suspención temporal)") {
 
-        
-          const [actaInstalacionReconexionMovimientoResult] = await pool.query(`
+
+        const [actaInstalacionReconexionMovimientoResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
             WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 19 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
 
-          const [actaInstalacionRexonexionMarquillaResult] = await pool.query(`
+        const [actaInstalacionRexonexionMarquillaResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 30 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-           
 
-          if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0) {
 
-            actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0] ?? "vacio";
-            actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0] ?? "vacio";
+        if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0) {
 
-            
-            if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 2){
+          actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0] ?? "vacio";
+          actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0] ?? "vacio";
 
-              const agendaFinalizada = finalizarAgenda(token, idAgenda);
-              console.log(agendaFinalizada);
 
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
+          if (actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla.estadoActaOperaciones == 2) {
 
-            }else if(actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla == 'vacio'){
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
 
-              const agendaFinalizada = finalizarAgenda(token, idAgenda);
-              console.log(agendaFinalizada);
+            res.status(200).json({
+              actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+              actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+            });
 
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
+          } else if (actaReconexionMovimiento.estadoActaMovimiento == 2 && actaReconexionMarquilla == 'vacio') {
 
-            }else if(actaReconexionMovimiento == 'vacio' && actaReconexionMarquilla.estadoActaOperaciones == 2){
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
 
-              const agendaFinalizada = finalizarAgenda(token, idAgenda);
-              console.log(agendaFinalizada);
+            res.status(200).json({
+              actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+              actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+            });
 
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
-              });
+          } else if (actaReconexionMovimiento == 'vacio' && actaReconexionMarquilla.estadoActaOperaciones == 2) {
 
-            }else{
-              res.status(200).json({
-                actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-                actasDeReconexionMovimientoMensajeRecha: actaReconexionMovimiento.obsActaRecha,
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
 
-                actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones,
-                actasDeOperacionesReconexionMarquillaMensajeRecha: actaReconexionMarquilla.obsActaRecha
-              });
-            } 
+            res.status(200).json({
+              actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+              actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones
+            });
 
           } else {
-            res.status(200).json({ message: "No se encontraron actas correspondientes de reconexion" });
+            res.status(200).json({
+              actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+              actasDeReconexionMovimientoMensajeRecha: actaReconexionMovimiento.obsActaRecha,
+
+              actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones,
+              actasDeOperacionesReconexionMarquillaMensajeRecha: actaReconexionMarquilla.obsActaRecha
+            });
           }
 
+        } else {
+          res.status(200).json({ message: "No se encontraron actas correspondientes de reconexion" });
+        }
 
-      }else if(tipoOperacion == "Terminación del contrato cancelación del servicio"){
-       
+
+      } else if (tipoOperacion == "Terminación del contrato cancelación del servicio") {
+
         const [actaRetiroMovimientoResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 5 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
@@ -3249,35 +3648,21 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
         const [actaFachadaCasaResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
- 
+
         const [actaCuadraCasaRetiroResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length>0 || actaOntRetiroResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
+        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length > 0 || actaOntRetiroResult.length > 0 || actaCuadraCasaRetiroResult.length > 0) {
 
-           actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
-           actaRetiroOperaciones = actaRetiroOperacionesResult[0]  ?? "vacio"
-           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
-           actaOntRetiro =  actaOntRetiroResult[0] ?? "vacio";
+          actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
+          actaRetiroOperaciones = actaRetiroOperacionesResult[0] ?? "vacio"
+          actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
+          actaOntRetiro = actaOntRetiroResult[0] ?? "vacio";
 
-           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
+          actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-           if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones== "vacio" && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2){
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
-              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
-            });
-
-
-           }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones== "vacio" && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio"){
+          if (actaRetiroMovimiento == "vacio" && actaRetiroOperaciones == "vacio" && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2) {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3290,7 +3675,8 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
             });
 
-           }else if(actaRetiroMovimiento == "vacio" && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2){
+
+          } else if (actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones == "vacio" && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio") {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3303,7 +3689,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
             });
 
-           }else if(actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio"){
+          } else if (actaRetiroMovimiento == "vacio" && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2) {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3316,7 +3702,20 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
             });
 
-           }else{
+          } else if (actaRetiroMovimiento.estadoActaMovimiento == 2 && actaRetiroOperaciones.estadoActaOperaciones == 2 && actaOntRetiro.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro == "vacio") {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+            res.status(200).json({
+              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones
+            });
+
+          } else {
 
             res.status(200).json({
               actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
@@ -3335,17 +3734,17 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
             });
 
-           }
-          
-          
-          
+          }
 
-        }else{
+
+
+
+        } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de retiro" });
         }
 
 
-      }else if(tipoOperacion == "Migración"){
+      } else if (tipoOperacion == "Migración") {
 
         const [actaInstalacionMigracionResult] = await pool.query(`
         SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
@@ -3359,13 +3758,13 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
         SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
         WHERE idAgenda = ? AND razonActaOperacion = 29 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length>0) {
+        if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length > 0) {
 
           actaMigracionInstalacionMovimiento = actaInstalacionMigracionResult[0] || "vacio";
           actaMigracionRetiroMovimiento = actaRetiroMigracionResult[0] || "vacio";
           actaMigracionOperacionesRetiro = actaInstalacionMarquillaMigracionResult[0] || "vacio"
 
-          if(actaMigracionInstalacionMovimiento.estadoActaMovimiento == 2 && actaMigracionRetiroMovimiento.estadoActaMovimiento == 2 && actaMigracionOperacionesRetiro.estadoActaOperaciones == 2){
+          if (actaMigracionInstalacionMovimiento.estadoActaMovimiento == 2 && actaMigracionRetiroMovimiento.estadoActaMovimiento == 2 && actaMigracionOperacionesRetiro.estadoActaOperaciones == 2) {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
@@ -3376,7 +3775,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaMigracionOperacionesRetiro: actaMigracionOperacionesRetiro.estadoActaOperaciones
             });
 
-          }else{
+          } else {
 
             res.status(200).json({
               actaMigracionInstalacionMovimiento: actaMigracionInstalacionMovimiento.estadoActaMovimiento,
@@ -3392,222 +3791,222 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
           }
 
-        }else{
+        } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de migracion" });
         }
 
-      }else if(tipoOperacion == "Traslado"){
+      } else if (tipoOperacion == "Traslado") {
 
         const [actaInstalacionTrasladoMovimiento] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 2 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaRetiroTrasladoMovimiento] = await pool.query(`
+
+        const [actaRetiroTrasladoMovimiento] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 8 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaInstalacionMarquillaTraslado] = await pool.query(`
+
+        const [actaInstalacionMarquillaTraslado] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 35 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaRetiroMarquillaTraslado] = await pool.query(`
+
+        const [actaRetiroMarquillaTraslado] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 34 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-            if(actaInstalacionTrasladoMovimiento.length>0 || actaRetiroTrasladoMovimiento.length>0 || actaInstalacionMarquillaTraslado.length>0 || actaRetiroMarquillaTraslado.length>0){
-             
-              actaTrasladoIntalacionMovimiento = actaInstalacionTrasladoMovimiento[0] || "vacio";
-              actaTrasladoRetiroMovimiento = actaRetiroTrasladoMovimiento[0] || "vacio";
-              actaTrasladoIntalacionMarquilla = actaInstalacionMarquillaTraslado[0] || "vacio";
-              actaTrasladoRetiroMarquilla = actaRetiroMarquillaTraslado[0] || "vacio";
-              
+        if (actaInstalacionTrasladoMovimiento.length > 0 || actaRetiroTrasladoMovimiento.length > 0 || actaInstalacionMarquillaTraslado.length > 0 || actaRetiroMarquillaTraslado.length > 0) {
 
-              if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 &&  actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio'){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio'){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio'){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento == 'vacio'){
-
-                const agendaFinalizada = finalizarAgenda(token, idAgenda);
-                console.log(agendaFinalizada);
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones 
-                });
-
-              }else{
-
-                
-                res.status(200).json({
-                  actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-                  actaTrasladoIntalacionMovimientoMensajeRecha: actaTrasladoIntalacionMovimiento.obsActaRecha,
-
-                  actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-                  actaTrasladoRetiroMovimientoMensajeRecha: actaTrasladoRetiroMovimiento.obsActaRecha,
-
-                  actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-                  actaTrasladoIntalacionMarquillaMensajeRecha: actaTrasladoIntalacionMarquilla.obsActaRecha,
-
-                  actaTrasladoRetiroMarquilla:actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-                  actaTrasladoRetiroMarquillaMensajeRecha:actaTrasladoRetiroMarquilla.obsActaRecha 
-                });
-
-              }
-             
-            }else{
-              res.status(200).json({ message: "No se encontraron actas correspondientes de traslado" });
-            }
+          actaTrasladoIntalacionMovimiento = actaInstalacionTrasladoMovimiento[0] || "vacio";
+          actaTrasladoRetiroMovimiento = actaRetiroTrasladoMovimiento[0] || "vacio";
+          actaTrasladoIntalacionMarquilla = actaInstalacionMarquillaTraslado[0] || "vacio";
+          actaTrasladoRetiroMarquilla = actaRetiroMarquillaTraslado[0] || "vacio";
 
 
-       
+          if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2) {
 
-      }else if(
-        tipoOperacion == "Soporte técnico Internet: Internet intermitente" || 
-        tipoOperacion == 'Soporte técnico Internet: Otras fallas de intertnet' || 
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio') {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio') {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2) {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2) {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio') {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento == 'vacio') {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones
+            });
+
+          } else {
+
+
+            res.status(200).json({
+              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+              actaTrasladoIntalacionMovimientoMensajeRecha: actaTrasladoIntalacionMovimiento.obsActaRecha,
+
+              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+              actaTrasladoRetiroMovimientoMensajeRecha: actaTrasladoRetiroMovimiento.obsActaRecha,
+
+              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+              actaTrasladoIntalacionMarquillaMensajeRecha: actaTrasladoIntalacionMarquilla.obsActaRecha,
+
+              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
+              actaTrasladoRetiroMarquillaMensajeRecha: actaTrasladoRetiroMarquilla.obsActaRecha
+            });
+
+          }
+
+        } else {
+          res.status(200).json({ message: "No se encontraron actas correspondientes de traslado" });
+        }
+
+
+
+
+      } else if (
+        tipoOperacion == "Soporte técnico Internet: Internet intermitente" ||
+        tipoOperacion == 'Soporte técnico Internet: Otras fallas de intertnet' ||
         tipoOperacion == 'Soporte técnico Internet: Internet lento' ||
         tipoOperacion == 'Soporte técnico Internet: No hay internet' ||
-        tipoOperacion == 'Soporte técnico Internet: Mover WiFi'){
+        tipoOperacion == 'Soporte técnico Internet: Mover WiFi') {
 
         const [actaInstalacionSoporteMovimientoResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 4 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaRetiroSoporteMovimientoResult] = await pool.query(`
+
+        const [actaRetiroSoporteMovimientoResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaMov_idestadoActaMov as estadoActaMovimiento FROM actamovimiento 
           WHERE idAgenda = ? AND razonMovimiento_idrazonMovimiento = 6 ORDER BY idactaMovimiento DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaSoporteMarquillaResult] = await pool.query(`
+
+        const [actaSoporteMarquillaResult] = await pool.query(`
           SELECT obsActaRecha , estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 32 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
 
-        if(actaInstalacionSoporteMovimientoResult.length>0 || actaRetiroSoporteMovimientoResult.length>0 || actaSoporteMarquillaResult.length>0){
+        if (actaInstalacionSoporteMovimientoResult.length > 0 || actaRetiroSoporteMovimientoResult.length > 0 || actaSoporteMarquillaResult.length > 0) {
 
           actaSoporteInstalacionMovimiento = actaInstalacionSoporteMovimientoResult[0] || "vacio"
           actaSoporteRetiroMovimiento = actaRetiroSoporteMovimientoResult[0] || "vacio"
           actaSoporteMarquilla = actaSoporteMarquillaResult[0] || "vacio"
 
-      
 
-          if(actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla.estadoActaOperaciones == 2){
-            
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
 
-                
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
-              
-            });
-
-          }else if(actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla == 'vacio'){
+          if (actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla.estadoActaOperaciones == 2) {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
 
-                
+
             res.status(200).json({
               actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
               actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
               actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
-              
+
             });
 
-          }else if(actaSoporteInstalacionMovimiento == 'vacio' && actaSoporteRetiroMovimiento == 'vacio' && actaSoporteMarquilla.estadoActaOperaciones == 2){
+          } else if (actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla == 'vacio') {
 
             const agendaFinalizada = finalizarAgenda(token, idAgenda);
             console.log(agendaFinalizada);
 
-                
+
             res.status(200).json({
               actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
               actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
               actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
-              
+
             });
 
-          }else{
-            
+          } else if (actaSoporteInstalacionMovimiento == 'vacio' && actaSoporteRetiroMovimiento == 'vacio' && actaSoporteMarquilla.estadoActaOperaciones == 2) {
+
+            const agendaFinalizada = finalizarAgenda(token, idAgenda);
+            console.log(agendaFinalizada);
+
+
+            res.status(200).json({
+              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones
+
+            });
+
+          } else {
+
             res.status(200).json({
               actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
               actaSoporteInstalacionMovimientoMensajeRecha: actaSoporteInstalacionMovimiento.obsActaRecha,
@@ -3622,14 +4021,14 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           }
 
 
-        }else{
+        } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de soporte" });
         }
 
 
-        
 
-      }else{
+
+      } else {
         res.status(200).json({ message: "No se encontro ese tipo de operacion" });
       }
 
@@ -3689,7 +4088,7 @@ const validarActa = async (req, res) => {
       try {
         await connection.beginTransaction();
 
-        if (nombreUsuario == 'karol yiseth mosquera alzate' || nombreUsuario == "mari luz pulgarin") {
+        if (nombreUsuario == 'karol yiseth mosquera alzate' || nombreUsuario == "mari luz pulgarin" || nombreUsuario == "juan carlos ballesteros restrepo") {
 
           if (tipoMovimiento == "Instalación Inicial" || tipoMovimiento == "Instalación Traslado" || tipoMovimiento == "Instalación Migración" || tipoMovimiento == "Instalación Soporte" || tipoMovimiento == 'Reconexion') {
             [obtenerUsuarioId] = await connection.query(`select u.idusuarios from usuarios as u inner join tercero as t on t.idtercero = u.tercero_idtercero where t.tercerocol = ?  `, nombreUsuario);
@@ -3880,7 +4279,7 @@ const anularActa = async (req, res) => {
 
         await connection.beginTransaction();
 
-        if (nombreUsuario == 'karol yiseth mosquera alzate' || nombreUsuario == "mari luz pulgarin") {
+        if (nombreUsuario == 'karol yiseth mosquera alzate' || nombreUsuario == "mari luz pulgarin" || nombreUsuario == "juan carlos ballesteros restrepo") {
           [obtenerUsuarioId] = await connection.query('select u.idusuarios from usuarios as u inner join tercero as t on t.idtercero = u.tercero_idtercero where t.tercerocol = ?', nombreUsuario);
           [servicioActivo] = await connection.query(`SELECT idServicio FROM servicio INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero WHERE LOWER(tercero.tercerocol) = ?`, servicio);
         } else {
@@ -4479,6 +4878,7 @@ module.exports = {
   cedulaTecnico,
   totalActivosFijosTecnicos,
   cambiarEstadoTecnico,
-  inicio
+  inicio,
+  buscarRegistrosPorReferenciaBodega
 };
 

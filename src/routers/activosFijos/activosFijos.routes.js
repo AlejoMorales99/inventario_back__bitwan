@@ -6,7 +6,7 @@ const {
         getCopyMac,buscarActivoFijoMover,razonDeMovimiento,tipoDeEntrega,Bodegas,
         postCrearActaDeMovimiento,getAllActaMovimientos, getActasDeMovimientoOperaciones, validarActa,getAllMovimientosTecnicos,getActivosFijosTecnicos,
         anularActa,buscarActivoFijoMoverTecnicos,getAllActas, postMovimientos,getRazonDeMovimientoTecnicos,getActasMovimientoOperacionesValidadas,
-        getBodegasTecnicos,retiroCliente,retiroClienteEspecifico,ObtenerTecnicos,buscarRegistros,
+        getBodegasTecnicos,retiroCliente,retiroClienteEspecifico,ObtenerTecnicos,buscarRegistros,buscarRegistrosPorReferenciaBodega,
         getBodegaAjusteInventario,getRazonesDeMovimiento,buscarRegistrosPorFechaAndServicio,getBodegaAjusteInventarioIngreso,cedulaTecnico,totalActivosFijosTecnicos,cambiarEstadoTecnico,inicio
       } = require('../../controllers/activosFijos/activosFijosController');
 
@@ -31,6 +31,10 @@ router.get('/api/buscarRegistros/:buscar/:columna/:nomUsuario/:idUsuario/:page/:
 
 //ruta para buscar activos fijos por fecha inicio fecha fin y bodega
 router.get('/api/buscarRegistrosPorFechaAndServicio/:servicio/:columna/:fechaInicio/:fechaFin/:nomUsuario/:idUsuario/:page/:itemPerPage', buscarRegistrosPorFechaAndServicio )
+
+
+//ruta para buscar activos fijos por fecha inicio fecha fin y bodega
+router.get('/api/buscarRegistrosPorReferenciaBodega/:servicio/:valoresReferencia/:nomUsuario/:idUsuario/:page/:itemPerPage', buscarRegistrosPorReferenciaBodega )
 
 //Ruta para traer todos los activos fijos de la base de datos 
 router.get('/api/getActivosFijos/:page/:itemsPerPage', getActivosFijos )
