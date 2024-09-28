@@ -90,6 +90,8 @@ const buscarRegistros = async (req, res) => {
       if (columna == "Numero activo fijo") {
 
 
+        
+
         if (servicioUsuario[0].idServicio == 2) {
           const [rows] = await pool.query(`select 
           idactivoFijo, numeroActivo, 
