@@ -89,9 +89,6 @@ const buscarRegistros = async (req, res) => {
 
       if (columna == "Numero activo fijo") {
 
-
-        
-
         if (servicioUsuario[0].idServicio == 2) {
           const [rows] = await pool.query(`select 
           idactivoFijo, numeroActivo, 
@@ -102,6 +99,7 @@ const buscarRegistros = async (req, res) => {
           estadouso.estadoUsocol AS estado ,
           proveedorinven.nombre as proveedor,
           tercero.tercerocol as servicio,
+          
           referencia.nombre as referencia,
           usuario,
           usuarioModifica,
