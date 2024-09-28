@@ -4,11 +4,11 @@ require('dotenv').config({ path: '../../.env' });
 // Crear un pool de conexiones a la base de datos MySQL
 const pool = mysql.createPool({
   connectionLimit: 30,                   // Establecer el límite máximo de conexiones simultáneas en el pool
-  host: process.env.DB_LOCAL_HOST,             // Obtener la dirección del host de la base de datos desde las variables de entorno
-  port: process.env.DB_LOCAL_PORT,             // Obtener el puerto de la base de datos desde las variables de entorno
-  user: process.env.DB_LOCAL_USER,             // Obtener el usuario de la base de datos desde las variables de entorno
-  password: process.env.DB_LOCAL_PASSWORD,     // Obtener la contraseña de la base de datos desde las variables de entorno
-  database: process.env.DB_LOCAL_NAME,         // Obtener el nombre de la base de datos desde las variables de entorno
+  host: process.env.DB_HOST,             // Obtener la dirección del host de la base de datos desde las variables de entorno
+  port: process.env.DB_PORT,             // Obtener el puerto de la base de datos desde las variables de entorno
+  user: process.env.DB_USER,             // Obtener el usuario de la base de datos desde las variables de entorno
+  password: process.env.DB_PASSWORD,     // Obtener la contraseña de la base de datos desde las variables de entorno
+  database: process.env.DB_NAME,         // Obtener el nombre de la base de datos desde las variables de entorno
   multipleStatements: true, // Habilita múltiples sentencias SQL
   waitForConnections: true,
   flags: '-SESSION_TRACK=NO_AUTOCOMMIT' // Desactivar autocommit
