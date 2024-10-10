@@ -1718,44 +1718,12 @@ const getActivosFijos = async (req, res) => {
       const [rows] = await pool.query(`call obtenerAllActivosFijos(?,?)`, [offset, itemsPerPage]);
       const totalItems = await pool.query('SELECT COUNT(*) AS total FROM activofijo');
 
-      const [totalReporte] = await pool.query(`SELECT 
-        idactivoFijo, 
-        numeroActivo, 
-        activofijo.serial, 
-        MAC,
-        descripcion, 
-        DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
-        DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
-        categoriainv.nombre AS categoria, 
-        estadouso.estadoUsocol AS estado,
-        proveedorinven.nombre AS proveedor,
-        tercero.tercerocol AS servicio,
-        referencia.nombre AS referencia,
-        usuario,
-        usuarioModifica,
-        servicio_Cliente
-    FROM 
-        activofijo
-    INNER JOIN 
-        categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
-    INNER JOIN 
-        estadouso ON idestadoUso = estadoUso_idestadoUso
-    INNER JOIN 
-        proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
-	INNER JOIN 
-		referencia on referencia.idreferencia = activofijo.referencia_idreferencia
-    LEFT JOIN 
-        servicio ON servicio.idservicio = activofijo.servicio_idservicio
-    LEFT JOIN 
-        tercero ON servicio.tercero_idtercero = tercero.idtercero 
-    ORDER BY 
-        idactivoFijo DESC`);
+      
 
       // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
       res.status(200).json({
         data: rows[0],
-        total: totalItems[0][0].total,
-        totalReporte:totalReporte
+        total: totalItems[0][0].total
       });
 
     } else {
