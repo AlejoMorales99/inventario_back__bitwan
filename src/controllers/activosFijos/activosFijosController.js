@@ -2623,7 +2623,8 @@ const razonDeMovimiento = async (req, res) => {
       razonMovimientocol='Ajuste Inventario Ingreso ' or
       razonMovimientocol='Ajuste Inventario Salida' or
       razonMovimientocol='Retiro oficina bitwan' or
-      razonMovimientocol='Retiro infraestructura' ORDER BY 
+      razonMovimientocol='Retiro infraestructura' or
+      razonMovimientocol='instalacion oficina bitwan' ORDER BY 
     CASE razonMovimientocol
       WHEN 'Envio a Técnico' THEN 1
       WHEN 'Retiro Final' THEN 2
@@ -2930,7 +2931,14 @@ const Bodegas = async (req, res) => {
           inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'INFRAESTRUCTURA');
           res.status(200).json(rows);
 
-      }
+      }else if(razon == "Instalacion oficina bitwan"){
+
+        const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
+          from servicio 
+          inner join tercero on tercero_idtercero = tercero.idtercero 
+          inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'alcala1');
+          res.status(200).json(rows);
+        }
 
     } else {
       // Si el código de respuesta de la función validarToken no es 200, se imprime un mensaje de "Autorización inválida" en la consola y se devuelve un código de estado 401 con un mensaje indicando que el token es inválido.
@@ -3269,6 +3277,24 @@ const postCrearActaDeMovimiento = async (req, res) => {
               (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
               imgGuiaTrans,estadoActaMov_idestadoActaMov,TipoEntrega_idTipoEntrega,idServicioEntra,
               idServicioSale,idUsuarioRegistra,numTercero) VALUES (?,?,?,?,?,?,?,?,?,?,?)` , [Descripcion, RazonMovimiento, fechaFormateada, GuiaTrasportadora, ImgGuia, estadoActa, TipoEntrega, 2, bodegaSale, obtenerUsuarioId[0].idusuarios, numTercero]);
+
+            const idActaMovimientos = rows.insertId; // Obtener el ID del último registro insertado
+
+            for (let i = 0; i < idOnts.length; i++) {
+              const [rows1] = await connection.query(`insert into movimiento (activoFijo_idactivoFijo,actaMovimiento_idactaMovimiento,estadoMovimiento) VALUES (?,?,?)`, [idOnts[i], idActaMovimientos, 0]);
+              const [actualizarActivo] = await connection.query(`update activofijo SET estadoM=? where idactivoFijo=? `, [1, idOnts[i]]);
+            }
+
+            await connection.commit();
+            // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
+            res.status(200).json(rows);
+
+          }else if(RazonMovimiento == 42){
+
+            const [rows] = await connection.query(`insert into actamovimiento 
+              (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
+              imgGuiaTrans,estadoActaMov_idestadoActaMov,TipoEntrega_idTipoEntrega,idServicioEntra,
+              idServicioSale,idUsuarioRegistra,numTercero) VALUES (?,?,?,?,?,?,?,?,?,?,?)` , [Descripcion, RazonMovimiento, fechaFormateada, GuiaTrasportadora, ImgGuia, estadoActa, TipoEntrega, 49, 2, obtenerUsuarioId[0].idusuarios, numTercero]);
 
             const idActaMovimientos = rows.insertId; // Obtener el ID del último registro insertado
 
