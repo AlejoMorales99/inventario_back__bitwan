@@ -1486,7 +1486,6 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
       const offset = (page - 1) * itemsPerPage;
 
       if (servicio == "vacio") {
-
         const [rows] = await pool.query(`select 
         idactivoFijo, numeroActivo, 
         activofijo.serial, MAC,
@@ -1508,10 +1507,33 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso >= ? && fechaIngreso <= ? LIMIT ${offset}, ${itemsPerPage};`, [fechaInicio, fechaFin]);
 
+        const [rowsTotal] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+         referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso >= ? && fechaIngreso <= ?`, [fechaInicio, fechaFin]);
+  
         const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo  where fechaIngreso >= ? && fechaIngreso <= ? ', [fechaInicio, fechaFin]);
+
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
 
       } else {
@@ -1536,13 +1558,36 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
         LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where (tercerocol = ? || servicio_Cliente=? ) && fechaIngreso >= ? && fechaIngreso <= ? LIMIT ${offset}, ${itemsPerPage}; `, [servicio, servicio, fechaInicio, fechaFin]);
 
+        const [rowsTotal] = await pool.query(`select 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion , 
+          categoriainv.nombre as categoria , 
+          estadouso.estadoUsocol AS estado ,
+          proveedorinven.nombre as proveedor,
+          tercero.tercerocol as servicio,
+          referencia.nombre as referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+          from activofijo
+          inner join categoriainv on categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+          inner join estadouso on idestadoUso = estadoUso_idestadoUso
+          inner join proveedorinven on idproveedorInven = proveedorInven_idproveedorInven
+          INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+          LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
+          LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where (tercerocol = ? || servicio_Cliente=? ) && fechaIngreso >= ? && fechaIngreso <= ?`, [servicio, servicio, fechaInicio, fechaFin]);
+
         const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo 
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero
           where (tercerocol = ? || servicio_Cliente=? ) && fechaIngreso >= ? && fechaIngreso <= ? `, [servicio, servicio, fechaInicio, fechaFin]);
+
         res.status(200).json({
           data: rows,
-          total: totalItems
+          total: totalItems,
+          totalReporte:rowsTotal
         });
       }
 
@@ -1673,10 +1718,44 @@ const getActivosFijos = async (req, res) => {
       const [rows] = await pool.query(`call obtenerAllActivosFijos(?,?)`, [offset, itemsPerPage]);
       const totalItems = await pool.query('SELECT COUNT(*) AS total FROM activofijo');
 
+      const [totalReporte] = await pool.query(`SELECT 
+        idactivoFijo, 
+        numeroActivo, 
+        activofijo.serial, 
+        MAC,
+        descripcion, 
+        DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
+        DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
+        categoriainv.nombre AS categoria, 
+        estadouso.estadoUsocol AS estado,
+        proveedorinven.nombre AS proveedor,
+        tercero.tercerocol AS servicio,
+        referencia.nombre AS referencia,
+        usuario,
+        usuarioModifica,
+        servicio_Cliente
+    FROM 
+        activofijo
+    INNER JOIN 
+        categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+    INNER JOIN 
+        estadouso ON idestadoUso = estadoUso_idestadoUso
+    INNER JOIN 
+        proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
+	INNER JOIN 
+		referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+    LEFT JOIN 
+        servicio ON servicio.idservicio = activofijo.servicio_idservicio
+    LEFT JOIN 
+        tercero ON servicio.tercero_idtercero = tercero.idtercero 
+    ORDER BY 
+        idactivoFijo DESC`);
+
       // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
       res.status(200).json({
         data: rows[0],
-        total: totalItems[0][0].total
+        total: totalItems[0][0].total,
+        totalReporte:totalReporte
       });
 
     } else {
@@ -2394,6 +2473,38 @@ const buscarActivoFijoMover = async (req, res) => {
         // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
         res.status(200).json(rows);
 
+      }else if(razon == 40){
+
+        const [rows] = await pool.query(
+          `SELECT idactivoFijo, activofijo.numeroActivo, categoriainv.nombre as categoria , referencia.nombre as referencia, marca.marcacol as marca, proveedorinven.nombre as proveedor, numeroActivo, activofijo.MAC, activofijo.serial, tercero.tercerocol AS bodega , servicio.idservicio, estadoM FROM activofijo
+        INNER JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+        inner join categoriainv on categoriainv.idcategoriaInv = activofijo.categoriaInv_idcategoriaInv
+        INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero
+        inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+        inner join marca on marca.idmarca = referencia.marca_idmarca
+        inner join proveedorinven on proveedorinven.idproveedorInven = activofijo.proveedorInven_idproveedorInven
+        WHERE activofijo.numeroActivo = ?  && tercero.tercerocol =? `, [numero, 'OFICINA BITWAN']
+        );
+
+        // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
+        res.status(200).json(rows);
+
+      } else if(razon == 41){
+
+        const [rows] = await pool.query(
+          `SELECT idactivoFijo, activofijo.numeroActivo, categoriainv.nombre as categoria , referencia.nombre as referencia, marca.marcacol as marca, proveedorinven.nombre as proveedor, numeroActivo, activofijo.MAC, activofijo.serial, tercero.tercerocol AS bodega , servicio.idservicio, estadoM FROM activofijo
+        INNER JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+        inner join categoriainv on categoriainv.idcategoriaInv = activofijo.categoriaInv_idcategoriaInv
+        INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero
+        inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia
+        inner join marca on marca.idmarca = referencia.marca_idmarca
+        inner join proveedorinven on proveedorinven.idproveedorInven = activofijo.proveedorInven_idproveedorInven
+        WHERE activofijo.numeroActivo = ?  && tercero.tercerocol =? `, [numero, 'INFRAESTRUCTURA']
+        );
+
+        // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
+        res.status(200).json(rows);
+
       } else {
 
         const [rows] = await pool.query(
@@ -2510,7 +2621,9 @@ const razonDeMovimiento = async (req, res) => {
       razonMovimientocol='Salida Baja' or
       razonMovimientocol='Venta Salida' or
       razonMovimientocol='Ajuste Inventario Ingreso ' or
-      razonMovimientocol='Ajuste Inventario Salida' ORDER BY 
+      razonMovimientocol='Ajuste Inventario Salida' or
+      razonMovimientocol='Retiro oficina bitwan' or
+      razonMovimientocol='Retiro infraestructura' ORDER BY 
     CASE razonMovimientocol
       WHEN 'Envio a Técnico' THEN 1
       WHEN 'Retiro Final' THEN 2
@@ -2801,6 +2914,22 @@ const Bodegas = async (req, res) => {
       inner join tercero on tercero_idtercero = tercero.idtercero 
       inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where tercero.tercerocol = ? && tercero.numeroTercero = ? `, [usuario.toLowerCase().trim(), 5065]);
         res.status(200).json(rows);
+      }else if(razon == "Retiro oficina bitwan"){
+
+        const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
+          from servicio 
+          inner join tercero on tercero_idtercero = tercero.idtercero 
+          inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'OFICINA BITWAN');
+          res.status(200).json(rows);
+
+      }else if(razon == "Retiro infraestructura"){
+
+        const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
+          from servicio 
+          inner join tercero on tercero_idtercero = tercero.idtercero 
+          inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'INFRAESTRUCTURA');
+          res.status(200).json(rows);
+
       }
 
     } else {
@@ -3134,6 +3263,24 @@ const postCrearActaDeMovimiento = async (req, res) => {
             await connection.commit();
             // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
             res.status(200).json(rows);
+          }else if(RazonMovimiento == 40 || RazonMovimiento == 41){
+
+            const [rows] = await connection.query(`insert into actamovimiento 
+              (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
+              imgGuiaTrans,estadoActaMov_idestadoActaMov,TipoEntrega_idTipoEntrega,idServicioEntra,
+              idServicioSale,idUsuarioRegistra,numTercero) VALUES (?,?,?,?,?,?,?,?,?,?,?)` , [Descripcion, RazonMovimiento, fechaFormateada, GuiaTrasportadora, ImgGuia, estadoActa, TipoEntrega, 2, bodegaSale, obtenerUsuarioId[0].idusuarios, numTercero]);
+
+            const idActaMovimientos = rows.insertId; // Obtener el ID del último registro insertado
+
+            for (let i = 0; i < idOnts.length; i++) {
+              const [rows1] = await connection.query(`insert into movimiento (activoFijo_idactivoFijo,actaMovimiento_idactaMovimiento,estadoMovimiento) VALUES (?,?,?)`, [idOnts[i], idActaMovimientos, 0]);
+              const [actualizarActivo] = await connection.query(`update activofijo SET estadoM=? where idactivoFijo=? `, [1, idOnts[i]]);
+            }
+
+            await connection.commit();
+            // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
+            res.status(200).json(rows);
+
           }
 
 
