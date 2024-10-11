@@ -83,17 +83,21 @@ async function postInsumosExistentes(nuevoInsumos, cantidadNuevoInsumos, proveed
 
 }
 
-async function postInsumoNuevo(nuevoInsumos, cantidadNuevoInsumos, stockMinimo , proveedor, marcaText, usuario) {
+async function postInsumoNuevo(nuevoInsumos, cantidadNuevoInsumos, precioInsumo, stockMinimo , proveedor, marcaText, usuario) {
 
     try {
 
         const [existenciaInsumo] = await pool.query('CALL validarExistenciaInsumo(?)',nuevoInsumos);
 
-        
+        console.log(existenciaInsumo[0]);
 
         if(existenciaInsumo[0] == "" ){
+         
             
-            const [results] = await pool.query(`CALL insertarNuevoInsumo(?, ?, ?, ?, ?, ?, @exitoProcedure);SELECT @exitoProcedure AS exitoProcedure;`, [nuevoInsumos, cantidadNuevoInsumos, stockMinimo , proveedor, marcaText, usuario]);
+            const [results] = await pool.query(`CALL insertarNuevoInsumo(?, ?, ?, ?, ?, ?, ?, @exitoProcedure);SELECT @exitoProcedure AS exitoProcedure;`, [nuevoInsumos, cantidadNuevoInsumos, precioInsumo, stockMinimo , proveedor, marcaText, usuario]);
+
+            console.log(results);
+
             const exito = results[1][0].exitoProcedure;
            
             if (exito == 1) {

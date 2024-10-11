@@ -194,6 +194,7 @@ async function postInsumoNuevo(req, res) {
 
       const nuevoInsumos = req.body.nuevoInsumos;
       const cantidadNuevoInsumos = req.body.cantidadNuevoInsumos;
+      const precioInsumo = req.body.precioInsumo;
       const stockMinimo = req.body.stockMinimo;
       const proveedor = req.body.proveedor;
       const marcaText = req.body.marcaText;
@@ -202,7 +203,7 @@ async function postInsumoNuevo(req, res) {
       const cantidadSinPuntos = parseInt(cantidadNuevoInsumos.replace(/\./g, ''), 10);
 
 
-      const postInsumoNuevo = await insumosModel.postInsumoNuevo(nuevoInsumos, cantidadSinPuntos, stockMinimo, proveedor, marcaText, usuario);
+      const postInsumoNuevo = await insumosModel.postInsumoNuevo(nuevoInsumos, cantidadSinPuntos, precioInsumo, stockMinimo, proveedor, marcaText, usuario);
 
       if (postInsumoNuevo == 1) {
 
