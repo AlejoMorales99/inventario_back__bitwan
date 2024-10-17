@@ -1663,6 +1663,32 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
     LIMIT ${offset}, ${itemsPerPage};`,
         [servicio, servicio, ...valoresReferencia]);
 
+
+        const [rowsTotal] = await pool.query(`SELECT 
+          idactivoFijo, numeroActivo, 
+          activofijo.serial, MAC,
+          descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
+          DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
+          categoriainv.nombre AS categoria, 
+          estadouso.estadoUsocol AS estado,
+          proveedorinven.nombre AS proveedor,
+          tercero.tercerocol AS servicio,
+          referencia.nombre AS referencia,
+          usuario,
+          usuarioModifica,
+          servicio_Cliente
+      FROM activofijo
+      INNER JOIN categoriainv ON categoriainv.idcategoriaInv = categoriaInv_idcategoriaInv
+      INNER JOIN estadouso ON idestadoUso = estadoUso_idestadoUso
+      INNER JOIN proveedorinven ON idproveedorInven = proveedorInven_idproveedorInven
+      INNER JOIN referencia ON referencia.idreferencia = activofijo.referencia_idreferencia
+      LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
+      LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero
+      WHERE (tercero.tercerocol = ? OR servicio_Cliente = ?) 
+      AND referencia.idreferencia IN (${placeholders})  `,
+          [servicio, servicio, ...valoresReferencia]);
+
+
       const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo 
           INNER JOIN referencia ON referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT JOIN servicio ON servicio.idservicio = activofijo.servicio_idservicio
@@ -1674,7 +1700,8 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
 
       res.status(200).json({
         data: rows,
-        total: totalItems
+        total: totalItems,
+        totalReporte:rowsTotal
       });
 
     } else {

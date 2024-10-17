@@ -25,12 +25,17 @@ router.post('/api/postInsumoNuevo' , insumosController.postInsumoNuevo);
 
 //--------------------------------endPoint de actas de movimiento-------------------------------//
 
-
 //Ruta para obtener todas las actas de movimiento de insumos
 router.get('/api/getAllActasDeMovimiento', insumosController.getAllActasDeMovimiento );
 
+//Ruta para obtener todas las actas de movimiento dependiendo del tecnico
+router.get('/api/getAllActasDeMovimientoTecnicos/:numTerceroTecnico', insumosController.getAllActasDeMovimientoTecnicos );
+
 //Ruta para obtener solo los insumos disponibles en el inventario
 router.get('/api/getListInsumos', insumosController.getListInsumos );
+
+//Ruta para obtener los insumos de un acta de movimiento
+router.get('/api/getInsumosPorIdActa/:idActaInsumo', insumosController.getInsumosPorIdActa );
 
 //Ruta para registrar nuevos insumos en el inventario
 router.post('/api/postActasDeMovimientosInsumos' , insumosController.postActasDeMovimientosInsumos);

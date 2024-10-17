@@ -46,7 +46,7 @@ const loginUsuario = async (req,res) =>{
     const numTercero = req.params.numTercero;
     
     // Consulta SQL para seleccionar los datos del usuario y el rol correspondiente
-     const [rows] = await pool.query(`select tercerocol,numeroTercero  from tercero where tercerocol = ? && numeroTercero = ?`,[nombreUsuario,numTercero]); 
+     const [rows] = await pool.query(`select tercerocol,numeroTercero, rol  from tercero where tercerocol = ? && numeroTercero = ?`,[nombreUsuario,numTercero]); 
 
 
     if(rows == ""){

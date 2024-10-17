@@ -201,9 +201,9 @@ async function postInsumoNuevo(req, res) {
       const usuario = req.body.usuario;
 
       const cantidadSinPuntos = parseInt(cantidadNuevoInsumos.replace(/\./g, ''), 10);
+      const precioSinPuntos = parseInt(precioInsumo.replace(/\./g, ''), 10);
 
-
-      const postInsumoNuevo = await insumosModel.postInsumoNuevo(nuevoInsumos, cantidadSinPuntos, precioInsumo, stockMinimo, proveedor, marcaText, usuario);
+      const postInsumoNuevo = await insumosModel.postInsumoNuevo(nuevoInsumos, cantidadSinPuntos, precioSinPuntos, stockMinimo, proveedor, marcaText, usuario);
 
       if (postInsumoNuevo == 1) {
 
@@ -262,6 +262,39 @@ async function getAllActasDeMovimiento(req, res) {
 }
 
 
+async function getAllActasDeMovimientoTecnicos(req, res) {
+
+  try {
+
+    const token = req.headers.authorization.split(" ")[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+
+      const numTerceroTecnico = req.params.numTerceroTecnico;
+
+      const getAllActasDeMovimientoTecnicos = await insumosModel.getAllActasDeMovimientoTecnicos(numTerceroTecnico);
+
+      res.status(200).json(getAllActasDeMovimientoTecnicos);
+
+    } else {
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    console.log("Error en listar las actas de movimiento de los tecnicos " + error);
+    return res.status(401).json({ mensaje: "Error al listar las actas de movimiento de los tecnicos" })
+  }
+}
+
+
 async function getListInsumos(req, res) {
 
   try {
@@ -293,6 +326,39 @@ async function getListInsumos(req, res) {
 }
 
 
+async function getInsumosPorIdActa(req, res) {
+
+  try {
+
+    const token = req.headers.authorization.split(" ")[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+
+      const idActaInsumo = req.params.idActaInsumo;
+      console.log(idActaInsumo);
+      const getListInsumosPorIdActa = await insumosModel.getInsumosPorIdActa(idActaInsumo);
+
+      res.status(200).json(getListInsumosPorIdActa);
+
+    } else {
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    console.log("Error en listar los insumos del id de una acta" + error);
+    return res.status(401).json({ mensaje: "Error al listar los insumos del id de un acta" })
+  }
+}
+
+
 
 async function postActasDeMovimientosInsumos(req, res) {
 
@@ -311,6 +377,7 @@ async function postActasDeMovimientosInsumos(req, res) {
 
       const registrosActa = req.body.registrosActa;
       const tecnicoEnvio = req.body.tecnicoEnvio;
+      const Descripcion = req.body.Descripcion;
       const numeroTerceroUsuario = req.body.usuarioTercero;
       const usuarioNombre = req.body.usuarioNombre;
       
@@ -322,7 +389,11 @@ async function postActasDeMovimientosInsumos(req, res) {
         cantidadesInsumos.push(Number(insumo.cantidad.replace(/\./g, ''))); // Convertir la cantidad a número
       });
 
-      await insumosModel.postActasDeMovimientosInsumos(idsInsumos,cantidadesInsumos,tecnicoEnvio,numeroTerceroUsuario,usuarioNombre); 
+      const insumosValidados = await insumosModel.validarInsumosExistentesActa(idsInsumos,cantidadesInsumos,numeroTerceroUsuario);
+
+      console.log(insumosValidados);
+
+      //await insumosModel.postActasDeMovimientosInsumos(idsInsumos,cantidadesInsumos,Descripcion,tecnicoEnvio,numeroTerceroUsuario,usuarioNombre); 
 
 
 
@@ -354,6 +425,8 @@ module.exports = {
 
 
   getAllActasDeMovimiento,
+  getAllActasDeMovimientoTecnicos,
   getListInsumos,
+  getInsumosPorIdActa,
   postActasDeMovimientosInsumos
 };
