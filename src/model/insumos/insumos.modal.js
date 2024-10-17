@@ -215,7 +215,7 @@ async function validarInsumosExistentesActa(idsInsumos, cantidadesInsumos, numer
             const cantidadInsumo = cantidadesInsumos[i];
 
             const [result] = await pool.query(`
-                SELECT IF(totalInsumosExistentes >= ?, true, false) AS resultado
+                SELECT nombreInsumo, IF(totalInsumosExistentes >= ?, true, false) AS resultado
                 FROM insumos
                 WHERE idinsumo = ?
                 AND servicio_idservicio = (

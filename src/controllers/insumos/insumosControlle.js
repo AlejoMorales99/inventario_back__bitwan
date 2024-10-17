@@ -380,26 +380,31 @@ async function postActasDeMovimientosInsumos(req, res) {
       const Descripcion = req.body.Descripcion;
       const numeroTerceroUsuario = req.body.usuarioTercero;
       const usuarioNombre = req.body.usuarioNombre;
-      
+
       const idsInsumos = [];
       const cantidadesInsumos = [];
- 
+
       registrosActa.forEach(insumo => {
         idsInsumos.push(insumo.idinsumo);
         cantidadesInsumos.push(Number(insumo.cantidad.replace(/\./g, ''))); // Convertir la cantidad a número
       });
 
-      const insumosValidados = await insumosModel.validarInsumosExistentesActa(idsInsumos,cantidadesInsumos,numeroTerceroUsuario);
+      const insumosValidados = await insumosModel.validarInsumosExistentesActa(idsInsumos, cantidadesInsumos, numeroTerceroUsuario);
 
-      console.log(insumosValidados);
+      const insumosInsuficientes = insumosValidados
+        .filter(insumo => insumo[0].resultado === 0) 
+        .map(insumo => insumo[0].nombreInsumo); 
 
-      //await insumosModel.postActasDeMovimientosInsumos(idsInsumos,cantidadesInsumos,Descripcion,tecnicoEnvio,numeroTerceroUsuario,usuarioNombre); 
-
-
-
-      res.status(200).json({mensaje: "Insumo registrado con exito",estado:200});
-
-
+      if (insumosInsuficientes.length === 0) {
+        await insumosModel.postActasDeMovimientosInsumos(idsInsumos, cantidadesInsumos, Descripcion, tecnicoEnvio, numeroTerceroUsuario, usuarioNombre);
+        res.status(200).json({ message: "Actas de movimiento registradas exitosamente", estado: 200 });
+      } else {
+        res.status(200).json({
+          error: "Al menos un insumo no tiene la cantidad suficiente disponible.",
+          insumosInsuficientes: insumosInsuficientes,
+          estado:400
+        });
+      }
 
 
     } else {
