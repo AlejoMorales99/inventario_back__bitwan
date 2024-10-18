@@ -3,7 +3,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 function validarToken(token) {
   const data = querystring.stringify({ authorization: token });
 
-  return fetch('https://serviciostest.bitwan.info/api/public/checktoken', {
+ 
+
+  return fetch('https://servicios.bitwan.info/api/public/checktoken', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
