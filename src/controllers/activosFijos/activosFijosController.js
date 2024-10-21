@@ -1737,7 +1737,7 @@ const getActivosFijos = async (req, res) => {
     // Se llama a la función validarToken para verificar y obtener datos a partir del token.
     const data = await validarToken(token);
 
-    console.log(data);
+    
 
     if (data.code == 200) {
       // Si el código de respuesta de la función validarToken es 200, se ejecuta la siguiente consulta SQL y se obtiene el resultado.

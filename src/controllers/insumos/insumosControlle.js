@@ -278,8 +278,9 @@ async function getAllActasDeMovimientoTecnicos(req, res) {
     if (data.code == 200) {
 
       const numTerceroTecnico = req.params.numTerceroTecnico;
+      const usuarioSesion = req.params.usuarioSesion;
 
-      const getAllActasDeMovimientoTecnicos = await insumosModel.getAllActasDeMovimientoTecnicos(numTerceroTecnico);
+      const getAllActasDeMovimientoTecnicos = await insumosModel.getAllActasDeMovimientoTecnicos(numTerceroTecnico,usuarioSesion);
 
       res.status(200).json(getAllActasDeMovimientoTecnicos);
 
@@ -324,6 +325,39 @@ async function getListInsumos(req, res) {
     return res.status(401).json({ mensaje: "Error al listar los insumos disponibles" })
   }
 }
+
+async function getListInsumosTecnicos(req, res) {
+
+  try {
+
+    const token = req.headers.authorization.split(" ")[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+
+      const numTerceroTecnico = req.params.numTerceroTecnico;
+
+      const getListInsumosTecnicos = await insumosModel.getListInsumosTecnicos(numTerceroTecnico);
+
+      res.status(200).json(getListInsumosTecnicos);
+
+    } else {
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    console.log("Error en listar los insumos disponibles de los tecnicos " + error);
+    return res.status(401).json({ mensaje: "Error al listar los insumos disponibles de los tecnicos" })
+  }
+}
+
 
 
 async function getInsumosPorIdActa(req, res) {
@@ -381,6 +415,8 @@ async function postActasDeMovimientosInsumos(req, res) {
       const numeroTerceroUsuario = req.body.usuarioTercero;
       const usuarioNombre = req.body.usuarioNombre;
 
+      console.log(registrosActa,tecnicoEnvio,numeroTerceroUsuario,usuarioNombre);
+
       const idsInsumos = [];
       const cantidadesInsumos = [];
 
@@ -419,6 +455,90 @@ async function postActasDeMovimientosInsumos(req, res) {
 }
 
 
+async function putAceptarActaDeMovimiento(req, res) {
+
+  try {
+
+    const token = req.headers.authorization.split(" ")[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+
+      const idActaInsumos = req.body.idActaInsumos;
+      const servicioSale = req.body.servicioSale;
+      const servicioEntra = req.body.servicioEntra;
+      const usuarioTercero = req.body.usuarioTercero;
+      const usuarioNombre = req.body.usuarioNombre;
+
+     
+
+      const putAceptarActaInsumos =  await insumosModel.putAceptarActaDeMovimiento(idActaInsumos,servicioSale,servicioEntra,usuarioTercero,usuarioNombre);
+
+      if(putAceptarActaInsumos == 200){
+
+        res.status(200).json({ message: "Actas de movimiento validada con exito", estado: putAceptarActaInsumos });
+
+      }else{
+        res.status(200).json({ message: "La acta no se pudo validar con exito", estado: putAceptarActaInsumos });
+      }
+
+      
+
+    } else {
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    console.log("Error en aceptar la acta de movimiento de insumos " + error);
+    return res.status(401).json({ mensaje: "Error en aceptar el acta de movimiento de insumos" })
+  }
+}
+
+
+async function putRechazarActaDeMovimiento(req, res) {
+
+  try {
+
+    const token = req.headers.authorization.split(" ")[1]; // Obtengo el token del encabezado de la solicitud
+
+    if (!token) {
+      // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
+      return res.status(401).json({ mensaje: 'Token no proporcionado' });
+    }
+
+    const data = await validarToken(token);
+
+    if (data.code == 200) {
+
+      const idActaInsumos = req.body.idActaInsumos;
+      const razonAnulacionActaInsumos = req.body.razonAnulacionActaInsumos;
+      const usuarioNombre = req.body.usuarioNombre;
+
+      const actaInsumosRechazada =  await insumosModel.putRechazarActaDeMovimiento(razonAnulacionActaInsumos,usuarioNombre,idActaInsumos);
+
+      res.status(200).json({ message: "Actas de movimiento rechazada con exito", estado: actaInsumosRechazada });
+
+    } else {
+      console.log("Autorizacion invalida");
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+  } catch (error) {
+    console.log("Error en rechazar la acta de movimiento de insumos " + error);
+    return res.status(401).json({ mensaje: "Error en rechazar el acta de movimiento de insumos" })
+  }
+}
+
+
+
+
 
 module.exports = {
   getAllInsumos,
@@ -432,6 +552,9 @@ module.exports = {
   getAllActasDeMovimiento,
   getAllActasDeMovimientoTecnicos,
   getListInsumos,
+  getListInsumosTecnicos,
   getInsumosPorIdActa,
-  postActasDeMovimientosInsumos
+  postActasDeMovimientosInsumos,
+  putAceptarActaDeMovimiento,
+  putRechazarActaDeMovimiento
 };

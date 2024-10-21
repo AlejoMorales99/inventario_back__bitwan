@@ -29,15 +29,27 @@ router.post('/api/postInsumoNuevo' , insumosController.postInsumoNuevo);
 router.get('/api/getAllActasDeMovimiento', insumosController.getAllActasDeMovimiento );
 
 //Ruta para obtener todas las actas de movimiento dependiendo del tecnico
-router.get('/api/getAllActasDeMovimientoTecnicos/:numTerceroTecnico', insumosController.getAllActasDeMovimientoTecnicos );
+router.get('/api/getAllActasDeMovimientoTecnicos/:numTerceroTecnico/:usuarioSesion', insumosController.getAllActasDeMovimientoTecnicos );
 
 //Ruta para obtener solo los insumos disponibles en el inventario
 router.get('/api/getListInsumos', insumosController.getListInsumos );
+
+//Ruta para obtener solo los insumos disponibles en el inventario dependiendo del tecnico
+router.get('/api/getListInsumosTecnicos/:numTerceroTecnico', insumosController.getListInsumosTecnicos );
+
 
 //Ruta para obtener los insumos de un acta de movimiento
 router.get('/api/getInsumosPorIdActa/:idActaInsumo', insumosController.getInsumosPorIdActa );
 
 //Ruta para registrar nuevos insumos en el inventario
 router.post('/api/postActasDeMovimientosInsumos' , insumosController.postActasDeMovimientosInsumos);
+
+//Ruta para aceptar una acta de movimiento
+router.post('/api/putAceptarActaDeMovimiento' , insumosController.putAceptarActaDeMovimiento);
+
+//Ruta para rechazar una acta de movimiento
+router.post('/api/putRechazarActaDeMovimiento' , insumosController.putRechazarActaDeMovimiento);
+
+
 
 module.exports = router;

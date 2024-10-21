@@ -113,7 +113,7 @@ async function postInsumoNuevo(
             nuevoInsumos
         );
 
-        console.log(existenciaInsumo[0]);
+
 
         if (existenciaInsumo[0] == "") {
             const [results] = await pool.query(
@@ -129,7 +129,7 @@ async function postInsumoNuevo(
                 ]
             );
 
-            console.log(results);
+
 
             const exito = results[1][0].exitoProcedure;
 
@@ -157,8 +157,8 @@ async function getAllActasDeMovimiento() {
     }
 }
 
-async function getAllActasDeMovimientoTecnicos(numTerceroTecnico) {
-    
+async function getAllActasDeMovimientoTecnicos(numTerceroTecnico,usuarioSesion) {
+
     try {
         const [result] = await pool.query(`SELECT 
         a.idactasMovimientoInsumos as idActa,
@@ -179,7 +179,7 @@ async function getAllActasDeMovimientoTecnicos(numTerceroTecnico) {
         INNER JOIN servicio serEntra ON a.servicioEntra = serEntra.idservicio
         INNER JOIN tercero terEntra ON serEntra.tercero_idtercero = terEntra.idtercero
         INNER JOIN servicio serSale ON a.servicioSale = serSale.idservicio
-        INNER JOIN tercero terSale ON serSale.tercero_idtercero = terSale.idtercero where terEntra.numeroTercero = ?  order by a.idactasMovimientoInsumos desc;`,numTerceroTecnico);
+        INNER JOIN tercero terSale ON serSale.tercero_idtercero = terSale.idtercero where terEntra.numeroTercero = ? or a.usuarioRegistra=?  order by a.idactasMovimientoInsumos desc;`, [numTerceroTecnico,usuarioSesion]);
 
         return result;
 
@@ -196,7 +196,21 @@ async function getListInsumos() {
         const [result] = await pool.query("call getListInsumos");
         return result[0];
     } catch (error) {
-        console.error("Error al listar las actas de movimiento", error);
+        console.error("Error al listar los insumos", error);
+    }
+}
+
+async function getListInsumosTecnicos(numTerceroTecnico) {
+    try {
+
+        const [servicioTecnico] = await pool.query(`SELECT idServicio FROM servicio INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero 
+        WHERE tercero.numeroTercero = ?`, numTerceroTecnico);
+
+        const [result] = await pool.query(`Select idinsumo,nombreInsumo from insumos where servicio_idservicio = ?`,servicioTecnico[0].idServicio);
+
+        return result;
+    } catch (error) {
+        console.error("Error al listar los insumos de los tecnicos", error);
     }
 }
 
@@ -284,6 +298,134 @@ async function postActasDeMovimientosInsumos(
     }
 }
 
+
+async function putAceptarActaDeMovimiento(idActaInsumos, servicioSale, servicioEntra, usuarioTercero, usuarioNombre) {
+    try {
+
+        const fechaActual = new Date();
+        const anio = fechaActual.getFullYear();
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
+        const dia = String(fechaActual.getDate()).padStart(2, "0");
+        const hora = String(fechaActual.getHours()).padStart(2, "0");
+        const minutos = String(fechaActual.getMinutes()).padStart(2, "0");
+        const segundos = String(fechaActual.getSeconds()).padStart(2, "0");
+
+        const fechaFormateada = `${anio}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
+
+        let nuevoInsumoId = null;
+
+        const connection = await pool.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            const [servicioSaleRows] = await pool.query(`SELECT idServicio FROM servicio INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero WHERE tercero.tercerocol = ?`, servicioSale);
+            const [servicioEntraRows] = await pool.query(`SELECT idServicio FROM servicio INNER JOIN tercero ON tercero.idtercero = servicio.tercero_idtercero WHERE tercero.tercerocol = ?`, servicioEntra);
+
+            const [movimientosInsumos] = await pool.query(`
+            SELECT insumos_idinsumo, cantidadMovimientoInsumo
+            FROM movimientosinsunos
+            WHERE actasMovimientoInsumos_idactasMovimientoInsumos = ?`, [idActaInsumos]);
+
+
+
+            for (let movimiento of movimientosInsumos) {
+                const insumoId = movimiento.insumos_idinsumo;
+                const cantidad = movimiento.cantidadMovimientoInsumo;
+
+                const [nombreInsumoServicio] = await connection.query('select nombreInsumo from insumos where idinsumo = ? ', insumoId);
+
+                const [insumoServicioRecibe] = await connection.query(`select idinsumo from insumos where nombreInsumo = ? and servicio_idservicio = ? `,
+                    [nombreInsumoServicio[0].nombreInsumo, servicioEntraRows[0].idServicio]);
+
+                if (insumoServicioRecibe == "") {
+                    const crearNuevoInsumosTecnico = await connection.query(
+                        `INSERT INTO insumos (nombreInsumo, totalEntradaInsumos, totalSalidaInsumos, totalInsumosExistentes, stockMinimo, stockOptimo, estadoStock, servicio_idservicio)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [nombreInsumoServicio[0].nombreInsumo, cantidad, 0, cantidad, 0, 0, 'optimo', servicioEntraRows[0].idServicio]
+                    );
+
+                    nuevoInsumoId = crearNuevoInsumosTecnico.insertId;
+
+                }
+
+                await connection.query(`update insumos set totalSalidaInsumos = totalSalidaInsumos + ? , totalInsumosExistentes = totalInsumosExistentes - ? ,
+                estadoStock = IF(totalInsumosExistentes - ? < stockMinimo, 'bajo', 'optimo')
+                where servicio_idservicio = ? and idinsumo = ?`, [cantidad, cantidad, cantidad, servicioSaleRows[0].idServicio, insumoId]);
+
+                if (insumoServicioRecibe == "") {
+                    await connection.query(`UPDATE insumos SET totalEntradaInsumos = totalEntradaInsumos + ?, totalInsumosExistentes = totalInsumosExistentes + ?,
+                    estadoStock = IF(totalInsumosExistentes + ? < stockMinimo, 'bajo', 'optimo')
+                    WHERE servicio_idservicio = ? AND idinsumo = ?`, [cantidad, cantidad, cantidad, servicioEntraRows[0].idServicio, nuevoInsumoId]);
+                } else {
+                    await connection.query(`UPDATE insumos SET totalEntradaInsumos = totalEntradaInsumos + ?, totalInsumosExistentes = totalInsumosExistentes + ?,
+                    estadoStock = IF(totalInsumosExistentes + ? < stockMinimo, 'bajo', 'optimo')
+                    WHERE servicio_idservicio = ? AND idinsumo = ?`, [cantidad, cantidad, cantidad, servicioEntraRows[0].idServicio, insumoServicioRecibe[0].idinsumo]);
+                }
+
+                await connection.query(`update actasmovimientoinsumos SET usuarioValida=? , estadoActaMov_idestadoActaMov=?, fechaValidacion=? 
+                where idactasMovimientoInsumos = ? `, [usuarioNombre, 2, fechaFormateada, idActaInsumos]);
+
+            }
+            await connection.commit();
+
+            return 200;
+
+
+        } catch (error) {
+            await connection.rollback();
+            console.error('Error al ejecutar las consultas:', error);
+            return 500;
+        } finally {
+            connection.release();
+        }
+
+    } catch (error) {
+        console.error("Error al aceptar el acta de movimiento de insumos", error);
+    }
+}
+
+
+
+async function putRechazarActaDeMovimiento(razonAnulacionActaInsumos, usuarioNombre,idActaInsumos) {
+    try {
+
+        const fechaActual = new Date();
+        const anio = fechaActual.getFullYear();
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
+        const dia = String(fechaActual.getDate()).padStart(2, "0");
+        const hora = String(fechaActual.getHours()).padStart(2, "0");
+        const minutos = String(fechaActual.getMinutes()).padStart(2, "0");
+        const segundos = String(fechaActual.getSeconds()).padStart(2, "0");
+
+        const fechaFormateada = `${anio}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
+
+        const connection = await pool.getConnection();
+
+        try {
+
+            await connection.query(`update actasmovimientoinsumos SET usuarioValida=? , estadoActaMov_idestadoActaMov=?, fechaValidacion=? , obsActaRecha=?
+            where idactasMovimientoInsumos = ? `, [usuarioNombre, 3, fechaFormateada, razonAnulacionActaInsumos , idActaInsumos]);
+
+            await connection.commit();
+
+            return 200;
+
+        } catch (error) {
+            await connection.rollback();
+            console.error('Error al ejecutar las consultas:', error);
+            return 500;
+        } finally {
+            connection.release();
+        }
+
+    } catch (error) {
+        console.error("Error al rechazar el acta de movimiento de insumos", error);
+    }
+}
+
+
+
 module.exports = {
     getAllInsumos,
     getAllHistorialInsumos,
@@ -295,7 +437,10 @@ module.exports = {
     getAllActasDeMovimiento,
     getAllActasDeMovimientoTecnicos,
     getListInsumos,
+    getListInsumosTecnicos,
     validarInsumosExistentesActa,
     getInsumosPorIdActa,
     postActasDeMovimientosInsumos,
+    putAceptarActaDeMovimiento,
+    putRechazarActaDeMovimiento
 };
