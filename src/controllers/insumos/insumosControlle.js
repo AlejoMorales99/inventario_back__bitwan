@@ -409,13 +409,12 @@ async function postActasDeMovimientosInsumos(req, res) {
 
     if (data.code == 200) {
 
+      const tipoActaDeInsumos = req.body.tipoActaDeInsumos;
       const registrosActa = req.body.registrosActa;
       const tecnicoEnvio = req.body.tecnicoEnvio;
       const Descripcion = req.body.Descripcion;
       const numeroTerceroUsuario = req.body.usuarioTercero;
       const usuarioNombre = req.body.usuarioNombre;
-
-      console.log(registrosActa,tecnicoEnvio,numeroTerceroUsuario,usuarioNombre);
 
       const idsInsumos = [];
       const cantidadesInsumos = [];
@@ -432,7 +431,7 @@ async function postActasDeMovimientosInsumos(req, res) {
         .map(insumo => insumo[0].nombreInsumo); 
 
       if (insumosInsuficientes.length === 0) {
-        await insumosModel.postActasDeMovimientosInsumos(idsInsumos, cantidadesInsumos, Descripcion, tecnicoEnvio, numeroTerceroUsuario, usuarioNombre);
+        await insumosModel.postActasDeMovimientosInsumos(idsInsumos, tipoActaDeInsumos , cantidadesInsumos, Descripcion, tecnicoEnvio, numeroTerceroUsuario, usuarioNombre);
         res.status(200).json({ message: "Actas de movimiento registradas exitosamente", estado: 200 });
       } else {
         res.status(200).json({

@@ -1217,6 +1217,60 @@ const buscarRegistros = async (req, res) => {
           total: totalItems
         });
 
+      } else if(columna == "creoActa"){
+
+        const [rows] = await pool.query(`
+          SELECT 
+          a.idactaMovimiento,
+          a.obsActaRecha,
+          DATE_FORMAT(a.fechaValidacion,'%Y-%m-%d') as fechaValidacion,
+          a.descripcion,
+          DATE_FORMAT(a.fechaRegistro,'%Y-%m-%d') as fechaRegistro, 
+          a.guiaTransportadora, 
+          rm.razonMovimientocol, 
+          eam.nombre AS estadoActaMovimiento, 
+          te.nombre AS tipoEntrega, 
+          ts.tercerocol AS tercerocolEntrada, 
+          tss.tercerocol AS tercerocolSalida, 
+          a.imgGuiaTrans,
+          a.imgActaFisica,
+          tu.tercerocol AS nombreUsuarioRegistra,
+          ter.tercerocol AS nombreUsuarioValida,
+          a.entraCliente,
+          a.saleCliente
+          FROM actamovimiento a
+          INNER JOIN razonmovimiento rm ON a.razonMovimiento_idrazonMovimiento = rm.idrazonMovimiento
+          INNER JOIN estadoactamov eam ON a.estadoActaMov_idestadoActaMov = eam.idestadoActaMov
+          INNER JOIN tipoentrega te ON a.tipoEntrega_idtipoEntrega = te.idTipoEntrega
+          LEFT JOIN servicio se ON a.idServicioEntra = se.idservicio
+          LEFT JOIN tercero ts ON se.tercero_idtercero = ts.idtercero
+          LEFT JOIN servicio ss ON a.idServicioSale = ss.idservicio
+          LEFT JOIN tercero tss ON ss.tercero_idtercero = tss.idtercero
+          INNER JOIN usuarios u ON u.idusuarios = a.idUsuarioRegistra
+          INNER JOIN tercero tu ON tu.idtercero = u.tercero_idtercero
+          INNER JOIN usuarios usu ON usu.idusuarios = a.idUsuarioRegistra
+          INNER JOIN tercero tt ON tt.idtercero = usu.tercero_idtercero
+          LEFT JOIN usuarios usua ON usua.idusuarios = a.idUsuarioValida
+          LEFT JOIN tercero ter ON ter.idtercero = usua.tercero_idtercero where tu.tercerocol  LIKE CONCAT('%', ?, '%')
+          ORDER BY
+              CASE 
+                  WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
+                  WHEN eam.nombre = 'Aceptada' THEN 2
+                  WHEN eam.nombre = 'Rechazada' THEN 3
+                  ELSE 4 
+              END  LIMIT ${offset}, ${itemsPerPage};`, buscar);
+
+          const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM actamovimiento a 
+           INNER JOIN usuarios u ON u.idusuarios = a.idUsuarioRegistra
+           INNER JOIN tercero tu ON tu.idtercero = u.tercero_idtercero 
+           where tu.tercerocol  LIKE CONCAT('%', ?, '%')`, buscar);
+
+
+          res.status(200).json({
+            data: rows,
+            total: totalItems
+          });
+
       } else if (columna == "verMovimientosOnts") {
 
         const [rows] = await pool.query(`

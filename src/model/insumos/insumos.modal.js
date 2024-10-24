@@ -270,6 +270,7 @@ async function getInsumosPorIdActa(idActaInsumo) {
 
 async function postActasDeMovimientosInsumos(
     idsInsumos,
+    tipoActaDeInsumos,
     cantidadesInsumos,
     Descripcion,
     tecnicoEnvio,
@@ -281,9 +282,10 @@ async function postActasDeMovimientosInsumos(
         const cantidadesInsumosJSON = JSON.stringify(cantidadesInsumos);
 
         const [existenciaInsumo] = await pool.query(
-            "CALL postActasDeMovimientoInsumos(?,?,?,?,?,?)",
+            "CALL postActasDeMovimientoInsumos(?,?,?,?,?,?,?)",
             [
                 idsInsumosJSON,
+                tipoActaDeInsumos,
                 cantidadesInsumosJSON,
                 Descripcion,
                 tecnicoEnvio,
