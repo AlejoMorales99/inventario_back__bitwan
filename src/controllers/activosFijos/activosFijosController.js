@@ -4548,71 +4548,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
           
 
-          if (actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla.estadoActaOperaciones == 2 && actaFachadaCasa=="vacio" && actaCuadraCasaRetiro == "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-
-            });
-
-          } else if (actaSoporteInstalacionMovimiento.estadoActaMovimiento == 2 && actaSoporteRetiroMovimiento.estadoActaMovimiento == 2 && actaSoporteMarquilla == 'vacio' && actaFachadaCasa=="vacio" && actaCuadraCasaRetiro == "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-
-            });
-
-          } else if (actaSoporteInstalacionMovimiento == 'vacio' && actaSoporteRetiroMovimiento == 'vacio' && actaSoporteMarquilla.estadoActaOperaciones == 2 && actaFachadaCasa=="vacio" && actaCuadraCasaRetiro == "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-
-            });
-
-          } else if(actaSoporteInstalacionMovimiento == 'vacio' && actaSoporteRetiroMovimiento == 'vacio' && actaSoporteMarquilla == "vacio" && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones == 2){
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-
-            });
-
-          } else {
+         
 
             res.status(200).json({
               actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
@@ -4631,7 +4567,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
             });
 
-          }
+          
 
 
         } else {
