@@ -42,13 +42,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where rm.razonMovimientocol LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -82,13 +76,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where eam.nombre LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -124,13 +112,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where  a.numServicioActa LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -163,13 +145,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where a.usuarioCreoActa LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -202,13 +178,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where  a.usuarioValidoActa LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -241,13 +211,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where DATE(a.fechaCreacionActa)  LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -261,7 +225,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
 
 
         }else if(columnaBuscar == "fechaValidacionActa"){
-            console.log(registroBuscar);
+         
             const [rows] = await pool.query(`
                 SELECT 
                 a.idactasDeOperaciones,
@@ -280,13 +244,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
                 INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
                 where DATE(a.fechaValidacionActa)  LIKE CONCAT('%', ?, '%')
-                ORDER BY
-                    CASE 
-                        WHEN eam.nombre = 'Pendiente Aceptacion' THEN 1
-                        WHEN eam.nombre = 'Aceptada' THEN 2
-                        WHEN eam.nombre = 'Rechazada' THEN 3
-                        ELSE 4 
-                    END
+                
                 
                 LIMIT ${offset},${itemsPerPage};`,registroBuscar);
 
@@ -297,6 +255,38 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
             total:totalItems
         }
 
+
+
+        }else if(columnaBuscar == "numCaja"){
+
+            const [rows] = await pool.query(`
+                SELECT 
+                a.idactasDeOperaciones,
+                rm.razonMovimientocol, 
+                eam.nombre AS estadoActaNombre, 
+                a.numServicioActa,
+                a.usuarioCreoActa,
+                a.usuarioValidoActa,
+                a.imgActa,
+                a.descripcion,
+                a.obsActaRecha,
+                a.nCajaNap,
+                DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
+                DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
+                FROM actasdeoperaciones a
+                INNER JOIN razonmovimiento rm ON a.razonActaOperacion = rm.idrazonMovimiento
+                INNER JOIN estadoactamov eam ON a.estadoActaOperacion = eam.idestadoActaMov
+                where  a.nCajaNap  LIKE CONCAT('%', ?, '%')
+                
+                
+                LIMIT ${offset},${itemsPerPage};`,registroBuscar);
+
+            const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM actasdeoperaciones a where a.nCajaNap  LIKE CONCAT('%', ?, '%')`,registroBuscar);
+
+        return {
+            data:rows,
+            total:totalItems
+        }
 
 
         }
