@@ -4038,6 +4038,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       let actaInstalacionInicialMovimiento;
       let actaInstalacionInicialMarquilla;
       let actaContractoInstalacion;
+      let actaContratoTvStick;
 
 
       let actaReconexionMovimiento;
@@ -4078,6 +4079,9 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 25 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+          const [actaInstalacionContractoTvStickResult] = await pool.query(`
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            WHERE idAgenda = ? AND razonActaOperacion = 24 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
           const [actaFachadaCasaResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
@@ -4092,11 +4096,13 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           actaInstalacionInicialMarquillaResult.length > 0 || 
           actaInstalacionContractoResult.length > 0 ||
           actaFachadaCasaResult.length>0 ||
-          actaCuadraCasaRetiroResult.length>0) {
+          actaCuadraCasaRetiroResult.length>0 ||
+          actaInstalacionContractoTvStickResult.length>0) {
 
           actaInstalacionInicialMovimiento = actaInstalacionInicialMovimientoResult[0] ?? "vacio";
           actaInstalacionInicialMarquilla = actaInstalacionInicialMarquillaResult[0] ?? "vacio";
           actaContractoInstalacion = actaInstalacionContractoResult[0] ?? "vacio";
+          actaContratoTvStick = actaInstalacionContractoTvStickResult[0] ?? "vacio";
 
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
@@ -4111,6 +4117,9 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
 
               actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones,
               actasContractoInstalacionMensajeRecha: actaContractoInstalacion.obsActaRecha,
+
+              actaContratoTvStick: actaContratoTvStick.estadoActaOperaciones,
+              actacontratoTvStickMensajeRecha:actaContratoTvStick.obsActaRecha,
 
 
               actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
@@ -4333,152 +4342,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-          if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento.estadoActaMovimiento == 2 && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio' && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == 'vacio' && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento.estadoActaMovimiento == 2 && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla == 'vacio' && actaTrasladoRetiroMovimiento == 'vacio' && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else if (actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento == 'vacio' && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro== "vacio") {
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == "vacio" && actaTrasladoRetiroMarquilla == "vacio" && actaTrasladoRetiroMovimiento == 'vacio' && actaFachadaCasa.estadoActaOperaciones == 2 && actaCuadraCasaRetiro.estadoActaOperaciones== 2){
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          }else if(actaTrasladoIntalacionMovimiento == 'vacio' && actaTrasladoIntalacionMarquilla == "vacio" && actaTrasladoRetiroMarquilla.estadoActaOperaciones == 2 && actaTrasladoRetiroMovimiento == 'vacio' && actaFachadaCasa == "vacio" && actaCuadraCasaRetiro=="vacio"){
-
-            const agendaFinalizada = finalizarAgenda(token, idAgenda);
-            console.log(agendaFinalizada);
-
-
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-            });
-
-          } else {
-
+         
 
             res.status(200).json({
               actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
@@ -4500,7 +4364,7 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
               actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
             });
 
-          }
+          
 
         } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de traslado" });
