@@ -35,6 +35,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -74,6 +75,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -115,6 +117,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -153,6 +156,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -191,6 +195,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -229,6 +234,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
@@ -267,6 +273,7 @@ async function getBuscarActasDeOperaciones(offset,itemsPerPage,registroBuscar,co
                 a.imgActa,
                 a.descripcion,
                 a.obsActaRecha,
+                a.nCajaNap,
                 DATE_FORMAT(a.fechaValidacionActa,'%Y-%m-%d %H:%i') as fechaValidacionActa,
                 DATE_FORMAT(a.fechaCreacionActa,'%Y-%m-%d %H:%i') as fechaCreacionActa
                 FROM actasdeoperaciones a
