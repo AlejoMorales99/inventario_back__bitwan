@@ -134,13 +134,13 @@ const buscarRegistros = async (req, res) => {
             INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
             LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
             LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where numeroActivo = ? order by idactivoFijo desc`, buscar);
-  
+
 
           const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo where numeroActivo = ?', buscar);
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
         }
@@ -200,7 +200,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
 
@@ -258,7 +258,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
         }
 
@@ -312,7 +312,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "Descripcion") {
@@ -338,7 +338,7 @@ const buscarRegistros = async (req, res) => {
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE descripcion LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
 
-          const [rowsTotal] = await pool.query(`select 
+        const [rowsTotal] = await pool.query(`select 
             idactivoFijo, numeroActivo, 
             activofijo.serial, MAC,
             descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso , 
@@ -363,7 +363,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "referencia") {
@@ -390,7 +390,7 @@ const buscarRegistros = async (req, res) => {
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero WHERE referencia.nombre LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
 
-          const [rowsTotal] = await pool.query(`select 
+        const [rowsTotal] = await pool.query(`select 
             idactivoFijo, numeroActivo, 
             activofijo.serial, MAC,
             descripcion, 
@@ -416,7 +416,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "categoria") {
@@ -442,7 +442,7 @@ const buscarRegistros = async (req, res) => {
     LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero 
     WHERE categoriainv.nombre LIKE ? ORDER BY idactivoFijo DESC LIMIT ${offset}, ${itemsPerPage};`, [`%${buscar}%`]);
 
-    const [rowsTotal] = await pool.query(`SELECT 
+        const [rowsTotal] = await pool.query(`SELECT 
       idactivoFijo, numeroActivo, activofijo.serial, MAC,
       descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
       DATE_FORMAT(fechaModificacion,'%Y-%m-%d') AS fechaModificacion, 
@@ -468,7 +468,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "estado") {
@@ -521,7 +521,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "proveedor") {
@@ -575,7 +575,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "razon de movimiento") {
@@ -623,7 +623,7 @@ const buscarRegistros = async (req, res) => {
                   ELSE 4 
               END  LIMIT ${offset}, ${itemsPerPage};`, buscar);
 
-              const [rowsTotal] = await pool.query(`
+          const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -668,12 +668,12 @@ const buscarRegistros = async (req, res) => {
           const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM actamovimiento a inner join razonmovimiento rm ON a.razonMovimiento_idrazonMovimiento = rm.idrazonMovimiento
           where rm.razonMovimientocol LIKE CONCAT('%', ?, '%')`, buscar);
 
-         
+
 
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
         } else {
@@ -878,7 +878,7 @@ const buscarRegistros = async (req, res) => {
               END  LIMIT ${offset}, ${itemsPerPage};`, buscar);
 
 
-              const [rowsTotal] = await pool.query(`
+          const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -926,7 +926,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
         } else {
@@ -1026,7 +1026,7 @@ const buscarRegistros = async (req, res) => {
                   ELSE 4 
               END  LIMIT ${offset}, ${itemsPerPage};`, [buscar, buscar]);
 
-              const [rowsTotal] = await pool.query(`
+          const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -1076,7 +1076,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
         } else {
 
@@ -1178,7 +1178,7 @@ const buscarRegistros = async (req, res) => {
               END  LIMIT ${offset}, ${itemsPerPage};`, [buscar, buscar]);
 
 
-              const [rowsTotal] = await pool.query(`
+          const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -1229,7 +1229,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
         } else {
@@ -1332,7 +1332,7 @@ const buscarRegistros = async (req, res) => {
               END  LIMIT ${offset}, ${itemsPerPage};`, buscar);
 
 
-              const [rowsTotal] = await pool.query(`
+          const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -1378,7 +1378,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
 
@@ -1435,7 +1435,7 @@ const buscarRegistros = async (req, res) => {
           total: totalItems
         });
 
-      } else if(columna == "creoActa"){
+      } else if (columna == "creoActa") {
 
         const [rows] = await pool.query(`
           SELECT 
@@ -1479,7 +1479,7 @@ const buscarRegistros = async (req, res) => {
               END  LIMIT ${offset}, ${itemsPerPage};`, buscar);
 
 
-              const [rowsTotal] = await pool.query(`
+        const [rowsTotal] = await pool.query(`
                 SELECT 
                 a.idactaMovimiento,
                 a.obsActaRecha,
@@ -1520,17 +1520,17 @@ const buscarRegistros = async (req, res) => {
                         ELSE 4 
                     END `, buscar);
 
-          const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM actamovimiento a 
+        const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM actamovimiento a 
            INNER JOIN usuarios u ON u.idusuarios = a.idUsuarioRegistra
            INNER JOIN tercero tu ON tu.idtercero = u.tercero_idtercero 
            where tu.tercerocol  LIKE CONCAT('%', ?, '%')`, buscar);
 
 
-           res.status(200).json({
-            data: rows,
-            total: totalItems,
-            totalReporte:rowsTotal
-          });
+        res.status(200).json({
+          data: rows,
+          total: totalItems,
+          totalReporte: rowsTotal
+        });
 
       } else if (columna == "verMovimientosOnts") {
 
@@ -1626,7 +1626,7 @@ const buscarRegistros = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else if (columna == "servicio") {
@@ -1680,7 +1680,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
         } else if (buscar == "alcala2") {
@@ -1733,7 +1733,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
 
 
@@ -1790,7 +1790,7 @@ const buscarRegistros = async (req, res) => {
           res.status(200).json({
             data: rows,
             total: totalItems,
-            totalReporte:rowsTotal
+            totalReporte: rowsTotal
           });
         }
 
@@ -1885,13 +1885,13 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
           INNER JOIN referencia on referencia.idreferencia = activofijo.referencia_idreferencia
           LEFT join servicio on servicio.idservicio = activofijo.servicio_idservicio
           LEFT join tercero on servicio.tercero_idtercero = tercero.idtercero where fechaIngreso >= ? && fechaIngreso <= ?`, [fechaInicio, fechaFin]);
-  
+
         const [totalItems] = await pool.query('SELECT COUNT(*) AS total FROM activofijo  where fechaIngreso >= ? && fechaIngreso <= ? ', [fechaInicio, fechaFin]);
 
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
 
       } else {
@@ -1945,7 +1945,7 @@ const buscarRegistrosPorFechaAndServicio = async (req, res) => {
         res.status(200).json({
           data: rows,
           total: totalItems,
-          totalReporte:rowsTotal
+          totalReporte: rowsTotal
         });
       }
 
@@ -1990,7 +1990,7 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
       const valoresReferencia = req.params.valoresReferencia.split(',');
       const placeholders = valoresReferencia.map(() => '?').join(',');
 
-    
+
 
       const page = parseInt(req.params.page) || 1; // Página actual
       const itemsPerPage = parseInt(req.params.itemPerPage) || 10;
@@ -2022,7 +2022,7 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
         [servicio, servicio, ...valoresReferencia]);
 
 
-        const [rowsTotal] = await pool.query(`SELECT 
+      const [rowsTotal] = await pool.query(`SELECT 
           idactivoFijo, numeroActivo, 
           activofijo.serial, MAC,
           descripcion, DATE_FORMAT(fechaIngreso,'%Y-%m-%d') AS fechaIngreso, 
@@ -2044,7 +2044,7 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
       LEFT JOIN tercero ON servicio.tercero_idtercero = tercero.idtercero
       WHERE (tercero.tercerocol = ? OR servicio_Cliente = ?) 
       AND referencia.idreferencia IN (${placeholders})  `,
-          [servicio, servicio, ...valoresReferencia]);
+        [servicio, servicio, ...valoresReferencia]);
 
 
       const [totalItems] = await pool.query(`SELECT COUNT(*) AS total FROM activofijo 
@@ -2059,7 +2059,7 @@ const buscarRegistrosPorReferenciaBodega = async (req, res) => {
       res.status(200).json({
         data: rows,
         total: totalItems,
-        totalReporte:rowsTotal
+        totalReporte: rowsTotal
       });
 
     } else {
@@ -2085,7 +2085,7 @@ const getActivosFijos = async (req, res) => {
 
     const token = req.headers.authorization.split(' ')[1]; // Obtengo el token del encabezado de la solicitud
 
-    
+
 
     if (!token) {
       // Si no se proporciona un token, se devuelve un código de estado 401 con un mensaje indicando que el token no fue proporcionado.
@@ -2095,7 +2095,7 @@ const getActivosFijos = async (req, res) => {
     // Se llama a la función validarToken para verificar y obtener datos a partir del token.
     const data = await validarToken(token);
 
-    
+
 
     if (data.code == 200) {
       // Si el código de respuesta de la función validarToken es 200, se ejecuta la siguiente consulta SQL y se obtiene el resultado.
@@ -2107,7 +2107,7 @@ const getActivosFijos = async (req, res) => {
       const [rows] = await pool.query(`call obtenerAllActivosFijos(?,?)`, [offset, itemsPerPage]);
       const totalItems = await pool.query('SELECT COUNT(*) AS total FROM activofijo');
 
-      
+
 
       // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
       res.status(200).json({
@@ -2830,7 +2830,7 @@ const buscarActivoFijoMover = async (req, res) => {
         // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
         res.status(200).json(rows);
 
-      }else if(razon == 40){
+      } else if (razon == 40) {
 
         const [rows] = await pool.query(
           `SELECT idactivoFijo, activofijo.numeroActivo, categoriainv.nombre as categoria , referencia.nombre as referencia, marca.marcacol as marca, proveedorinven.nombre as proveedor, numeroActivo, activofijo.MAC, activofijo.serial, tercero.tercerocol AS bodega , servicio.idservicio, estadoM FROM activofijo
@@ -2846,7 +2846,7 @@ const buscarActivoFijoMover = async (req, res) => {
         // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
         res.status(200).json(rows);
 
-      } else if(razon == 41){
+      } else if (razon == 41) {
 
         const [rows] = await pool.query(
           `SELECT idactivoFijo, activofijo.numeroActivo, categoriainv.nombre as categoria , referencia.nombre as referencia, marca.marcacol as marca, proveedorinven.nombre as proveedor, numeroActivo, activofijo.MAC, activofijo.serial, tercero.tercerocol AS bodega , servicio.idservicio, estadoM FROM activofijo
@@ -2931,7 +2931,7 @@ const buscarActivoFijoMoverTecnicos = async (req, res) => {
         inner join referencia on referencia.idreferencia = activofijo.referencia_idreferencia
         inner join marca on marca.idmarca = referencia.marca_idmarca
         inner join proveedorinven on proveedorinven.idproveedorInven = activofijo.proveedorInven_idproveedorInven
-        WHERE activofijo.numeroActivo = ? or activofijo.serial = ?  && tercero.tercerocol =? && numeroTercero=? `, [numero,numero, usuario, numTercero]
+        WHERE activofijo.numeroActivo = ? or activofijo.serial = ?  && tercero.tercerocol =? && numeroTercero=? `, [numero, numero, usuario, numTercero]
       );
 
       // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
@@ -3275,36 +3275,36 @@ const Bodegas = async (req, res) => {
       inner join tercero on tercero_idtercero = tercero.idtercero 
       inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where tercero.tercerocol = ? && tercero.numeroTercero = ? `, [usuario.toLowerCase().trim(), 5065]);
         res.status(200).json(rows);
-      }else if(razon == "Retiro oficina bitwan"){
+      } else if (razon == "Retiro oficina bitwan") {
 
         const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
           from servicio 
           inner join tercero on tercero_idtercero = tercero.idtercero 
           inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'OFICINA BITWAN');
-          res.status(200).json(rows);
+        res.status(200).json(rows);
 
-      }else if(razon == "Retiro infraestructura"){
+      } else if (razon == "Retiro infraestructura") {
 
         const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
           from servicio 
           inner join tercero on tercero_idtercero = tercero.idtercero 
           inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'INFRAESTRUCTURA');
-          res.status(200).json(rows);
+        res.status(200).json(rows);
 
-      }else if(razon == "Instalacion oficina bitwan"){
-
-        const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
-          from servicio 
-          inner join tercero on tercero_idtercero = tercero.idtercero 
-          inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'alcala1');
-          res.status(200).json(rows);
-      }else if(razon == "Instalacion infraestructura"){
+      } else if (razon == "Instalacion oficina bitwan") {
 
         const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
           from servicio 
           inner join tercero on tercero_idtercero = tercero.idtercero 
           inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'alcala1');
-          res.status(200).json(rows);
+        res.status(200).json(rows);
+      } else if (razon == "Instalacion infraestructura") {
+
+        const [rows] = await pool.query(`select idservicio as ID , tercero.tercerocol AS nombre , tiposervicio.tipoServiciocol as tipo
+          from servicio 
+          inner join tercero on tercero_idtercero = tercero.idtercero 
+          inner join tiposervicio on tipoServicio_idtipoServicio = tiposervicio.idtipoServicio where  tercero.tercerocol = ?`, 'alcala1');
+        res.status(200).json(rows);
 
       }
 
@@ -3639,7 +3639,7 @@ const postCrearActaDeMovimiento = async (req, res) => {
             await connection.commit();
             // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
             res.status(200).json(rows);
-          }else if(RazonMovimiento == 40 || RazonMovimiento == 41){
+          } else if (RazonMovimiento == 40 || RazonMovimiento == 41) {
 
             const [rows] = await connection.query(`insert into actamovimiento 
               (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
@@ -3657,7 +3657,7 @@ const postCrearActaDeMovimiento = async (req, res) => {
             // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
             res.status(200).json(rows);
 
-          }else if(RazonMovimiento == 42){
+          } else if (RazonMovimiento == 42) {
 
             const [rows] = await connection.query(`insert into actamovimiento 
               (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
@@ -3675,7 +3675,7 @@ const postCrearActaDeMovimiento = async (req, res) => {
             // Se devuelve un código de estado 200 con los datos obtenidos de la consulta SQL.
             res.status(200).json(rows);
 
-          }else if(RazonMovimiento == 43){
+          } else if (RazonMovimiento == 43) {
 
             const [rows] = await connection.query(`insert into actamovimiento 
               (descripcion,razonMovimiento_idrazonMovimiento,fechaRegistro,guiaTransportadora,
@@ -4065,6 +4065,8 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
       let actaSoporteRetiroMovimiento;
       let actaSoporteMarquilla;
 
+      let actaFotoCajaAgendas;
+
       if (tipoOperacion == "Solicitud de instalación") {
 
         const [actaInstalacionInicialMovimientoResult] = await pool.query(`
@@ -4079,56 +4081,66 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 25 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-          const [actaInstalacionContractoTvStickResult] = await pool.query(`
+        const [actaInstalacionContractoTvStickResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 24 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-          const [actaFachadaCasaResult] = await pool.query(`
+        const [actaFotoCaja] = await pool.query(`
+              SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+              WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
+        const [actaFachadaCasaResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
-  
-          const [actaCuadraCasaRetiroResult] = await pool.query(`
+
+        const [actaCuadraCasaRetiroResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         // Verifica que haya resultados antes de intentar acceder a las propiedades
-        if (actaInstalacionInicialMovimientoResult.length > 0 || 
-          actaInstalacionInicialMarquillaResult.length > 0 || 
+        if (actaInstalacionInicialMovimientoResult.length > 0 ||
+          actaInstalacionInicialMarquillaResult.length > 0 ||
           actaInstalacionContractoResult.length > 0 ||
-          actaFachadaCasaResult.length>0 ||
-          actaCuadraCasaRetiroResult.length>0 ||
-          actaInstalacionContractoTvStickResult.length>0) {
+          actaFachadaCasaResult.length > 0 ||
+          actaCuadraCasaRetiroResult.length > 0 ||
+          actaInstalacionContractoTvStickResult.length > 0 ||
+          actaFotoCaja.length>0) {
 
           actaInstalacionInicialMovimiento = actaInstalacionInicialMovimientoResult[0] ?? "vacio";
           actaInstalacionInicialMarquilla = actaInstalacionInicialMarquillaResult[0] ?? "vacio";
           actaContractoInstalacion = actaInstalacionContractoResult[0] ?? "vacio";
           actaContratoTvStick = actaInstalacionContractoTvStickResult[0] ?? "vacio";
 
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
+
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-          
-            res.status(200).json({
-              actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
-              actaDeInstalacionMensajeRecha: actaInstalacionInicialMovimiento.obsActaRecha,
 
-              actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
-              actasDeInstalacionMarquillaMensajeRecha: actaInstalacionInicialMarquilla.obsActaRecha,
+          res.status(200).json({
+            actasDeInstalacionInicial: actaInstalacionInicialMovimiento.estadoActaMovimiento,
+            actaDeInstalacionMensajeRecha: actaInstalacionInicialMovimiento.obsActaRecha,
 
-              actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones,
-              actasContractoInstalacionMensajeRecha: actaContractoInstalacion.obsActaRecha,
+            actasDeInstalacionMarquillaInicial: actaInstalacionInicialMarquilla.estadoActaOperaciones,
+            actasDeInstalacionMarquillaMensajeRecha: actaInstalacionInicialMarquilla.obsActaRecha,
 
-              actaContratoTvStick: actaContratoTvStick.estadoActaOperaciones,
-              actacontratoTvStickMensajeRecha:actaContratoTvStick.obsActaRecha,
+            actaContractoInstalacion: actaContractoInstalacion.estadoActaOperaciones,
+            actasContractoInstalacionMensajeRecha: actaContractoInstalacion.obsActaRecha,
+
+            actaContratoTvStick: actaContratoTvStick.estadoActaOperaciones,
+            actacontratoTvStickMensajeRecha: actaContratoTvStick.obsActaRecha,
 
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
-            });
-          
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+            actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+          });
+
 
         } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de instalacion inicial" });
@@ -4145,42 +4157,48 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 30 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+            const [actaFotoCaja] = await pool.query(`
+              SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+              WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
         const [actaFachadaCasaResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
-    
+
         const [actaCuadraCasaRetiroResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        
 
-        if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0 || actaFachadaCasaResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
+
+        if (actaInstalacionReconexionMovimientoResult.length > 0 || actaInstalacionRexonexionMarquillaResult.length > 0 || actaFachadaCasaResult.length > 0 || actaCuadraCasaRetiroResult.length > 0 || actaFotoCaja.length>0) {
 
           actaReconexionMovimiento = actaInstalacionReconexionMovimientoResult[0] ?? "vacio";
           actaReconexionMarquilla = actaInstalacionRexonexionMarquillaResult[0] ?? "vacio";
-
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
 
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-          
-            res.status(200).json({
-              actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
-              actasDeReconexionMovimientoMensajeRecha: actaReconexionMovimiento.obsActaRecha,
 
-              actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones,
-              actasDeOperacionesReconexionMarquillaMensajeRecha: actaReconexionMarquilla.obsActaRecha,
+          res.status(200).json({
+            actasDeReconexionMovimiento: actaReconexionMovimiento.estadoActaMovimiento,
+            actasDeReconexionMovimientoMensajeRecha: actaReconexionMovimiento.obsActaRecha,
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actasDeOperacionesReconexionMarquilla: actaReconexionMarquilla.estadoActaOperaciones,
+            actasDeOperacionesReconexionMarquillaMensajeRecha: actaReconexionMarquilla.obsActaRecha,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
 
-            });
-          
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+            actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+
+          });
+
 
         } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de reconexion" });
@@ -4201,6 +4219,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 36 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+        const [actaFotoCaja] = await pool.query(`
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
         const [actaFachadaCasaResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
@@ -4209,33 +4231,37 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length > 0 || actaOntRetiroResult.length > 0 || actaCuadraCasaRetiroResult.length > 0) {
+        if (actaRetiroMovimientoResult.length > 0 || actaRetiroOperacionesResult.length > 0 || actaFachadaCasaResult.length > 0 || actaOntRetiroResult.length > 0 || actaCuadraCasaRetiroResult.length > 0 || actaFotoCaja.length > 0) {
 
           actaRetiroMovimiento = actaRetiroMovimientoResult[0] ?? "vacio"
           actaRetiroOperaciones = actaRetiroOperacionesResult[0] ?? "vacio"
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaOntRetiro = actaOntRetiroResult[0] ?? "vacio";
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
 
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-          
 
-            res.status(200).json({
-              actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
-              actaRetiroMovimientoMensajeRecha: actaRetiroMovimiento.obsActaRecha,
 
-              actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
-              actaRetiroOperacionesMensajeRecha: actaRetiroOperaciones.obsActaRecha,
+          res.status(200).json({
+            actaRetiroMovimiento: actaRetiroMovimiento.estadoActaMovimiento,
+            actaRetiroMovimientoMensajeRecha: actaRetiroMovimiento.obsActaRecha,
 
-              actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
-              actaOntRetiroMensajeRecha: actaOntRetiro.obsActaRecha,
+            actaRetiroOperaciones: actaRetiroOperaciones.estadoActaOperaciones,
+            actaRetiroOperacionesMensajeRecha: actaRetiroOperaciones.obsActaRecha,
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actaOntRetiro: actaOntRetiro.estadoActaOperaciones,
+            actaOntRetiroMensajeRecha: actaOntRetiro.obsActaRecha,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
-            });
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+            actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+          });
 
 
 
@@ -4262,6 +4288,10 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 27 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+          const [actaFotoCaja] = await pool.query(`
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
         const [actaFachadaCasaResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
@@ -4270,37 +4300,40 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length > 0 || actaContratoMigracion.length>0 || actaFachadaCasaResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
+        if (actaInstalacionMigracionResult.length > 0 || actaRetiroMigracionResult.length > 0 || actaInstalacionMarquillaMigracionResult.length > 0 || actaContratoMigracion.length > 0 || actaFachadaCasaResult.length > 0 || actaCuadraCasaRetiroResult.length > 0 || actaFotoCaja.length>0) {
 
           actaMigracionInstalacionMovimiento = actaInstalacionMigracionResult[0] || "vacio";
           actaMigracionRetiroMovimiento = actaRetiroMigracionResult[0] || "vacio";
           actaMigracionOperacionesRetiro = actaInstalacionMarquillaMigracionResult[0] || "vacio"
           actaMigracionContrato = actaContratoMigracion[0] || "vacio";
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
 
-      
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-            
 
-            res.status(200).json({
-              actaMigracionInstalacionMovimiento: actaMigracionInstalacionMovimiento.estadoActaMovimiento,
-              actaMigracionInstalacionMovimientoMensajeRecha: actaMigracionInstalacionMovimiento.obsActaRecha,
 
-              actaMigracionRetiroMovimiento: actaMigracionRetiroMovimiento.estadoActaMovimiento,
-              actaMigracionRetiroMovimientoMensajeRecha: actaMigracionRetiroMovimiento.obsActaRecha,
+          res.status(200).json({
+            actaMigracionInstalacionMovimiento: actaMigracionInstalacionMovimiento.estadoActaMovimiento,
+            actaMigracionInstalacionMovimientoMensajeRecha: actaMigracionInstalacionMovimiento.obsActaRecha,
 
-              actaMigracionOperacionesRetiro: actaMigracionOperacionesRetiro.estadoActaOperaciones,
-              actaMigracionOperacionesRetiroMensajeRecha: actaMigracionOperacionesRetiro.obsActaRecha,
+            actaMigracionRetiroMovimiento: actaMigracionRetiroMovimiento.estadoActaMovimiento,
+            actaMigracionRetiroMovimientoMensajeRecha: actaMigracionRetiroMovimiento.obsActaRecha,
 
-              actaMigracionContrato: actaMigracionContrato.estadoActaOperaciones,
+            actaMigracionOperacionesRetiro: actaMigracionOperacionesRetiro.estadoActaOperaciones,
+            actaMigracionOperacionesRetiroMensajeRecha: actaMigracionOperacionesRetiro.obsActaRecha,
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actaMigracionContrato: actaMigracionContrato.estadoActaOperaciones,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
-            });
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+              actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+          });
 
         } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de migracion" });
@@ -4324,47 +4357,56 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 34 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+          const [actaFotoCaja] = await pool.query(`
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
+
         const [actaFachadaCasaResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
-  
+
         const [actaCuadraCasaRetiroResult] = await pool.query(`
           SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-        if (actaInstalacionTrasladoMovimiento.length > 0 || actaRetiroTrasladoMovimiento.length > 0 || actaInstalacionMarquillaTraslado.length > 0 || actaRetiroMarquillaTraslado.length > 0 || actaFachadaCasaResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
+        if (actaInstalacionTrasladoMovimiento.length > 0 || actaRetiroTrasladoMovimiento.length > 0 || actaInstalacionMarquillaTraslado.length > 0 || actaRetiroMarquillaTraslado.length > 0 || actaFachadaCasaResult.length > 0 || actaCuadraCasaRetiroResult.length > 0 || actaFotoCaja.length>0) {
 
           actaTrasladoIntalacionMovimiento = actaInstalacionTrasladoMovimiento[0] || "vacio";
           actaTrasladoRetiroMovimiento = actaRetiroTrasladoMovimiento[0] || "vacio";
           actaTrasladoIntalacionMarquilla = actaInstalacionMarquillaTraslado[0] || "vacio";
           actaTrasladoRetiroMarquilla = actaRetiroMarquillaTraslado[0] || "vacio";
 
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
+
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
 
-         
 
-            res.status(200).json({
-              actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
-              actaTrasladoIntalacionMovimientoMensajeRecha: actaTrasladoIntalacionMovimiento.obsActaRecha,
 
-              actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
-              actaTrasladoRetiroMovimientoMensajeRecha: actaTrasladoRetiroMovimiento.obsActaRecha,
+          res.status(200).json({
+            actaTrasladoIntalacionMovimiento: actaTrasladoIntalacionMovimiento.estadoActaMovimiento,
+            actaTrasladoIntalacionMovimientoMensajeRecha: actaTrasladoIntalacionMovimiento.obsActaRecha,
 
-              actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
-              actaTrasladoIntalacionMarquillaMensajeRecha: actaTrasladoIntalacionMarquilla.obsActaRecha,
+            actaTrasladoRetiroMovimiento: actaTrasladoRetiroMovimiento.estadoActaMovimiento,
+            actaTrasladoRetiroMovimientoMensajeRecha: actaTrasladoRetiroMovimiento.obsActaRecha,
 
-              actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
-              actaTrasladoRetiroMarquillaMensajeRecha: actaTrasladoRetiroMarquilla.obsActaRecha,
+            actaTrasladoIntalacionMarquilla: actaTrasladoIntalacionMarquilla.estadoActaOperaciones,
+            actaTrasladoIntalacionMarquillaMensajeRecha: actaTrasladoIntalacionMarquilla.obsActaRecha,
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actaTrasladoRetiroMarquilla: actaTrasladoRetiroMarquilla.estadoActaOperaciones,
+            actaTrasladoRetiroMarquillaMensajeRecha: actaTrasladoRetiroMarquilla.obsActaRecha,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
-            });
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
 
-          
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+              actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+          });
+
+
 
         } else {
           res.status(200).json({ message: "No se encontraron actas correspondientes de traslado" });
@@ -4392,46 +4434,54 @@ const getActasMovimientoOperacionesValidadas = async (req, res) => {
           SELECT obsActaRecha , estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
           WHERE idAgenda = ? AND razonActaOperacion = 32 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
+          const [actaFotoCaja] = await pool.query(`
+            SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
+            WHERE idAgenda = ? AND razonActaOperacion = 44 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
-          const [actaFachadaCasaResult] = await pool.query(`
+        const [actaFachadaCasaResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 28 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
-    
-          const [actaCuadraCasaRetiroResult] = await pool.query(`
+
+        const [actaCuadraCasaRetiroResult] = await pool.query(`
             SELECT obsActaRecha, estadoActaOperacion as estadoActaOperaciones FROM actasdeoperaciones 
             WHERE idAgenda = ? AND razonActaOperacion = 39 ORDER BY idactasDeOperaciones DESC LIMIT 1`, [idAgenda]);
 
 
-        if (actaInstalacionSoporteMovimientoResult.length > 0 || actaRetiroSoporteMovimientoResult.length > 0 || actaSoporteMarquillaResult.length > 0 || actaFachadaCasaResult.length>0 || actaCuadraCasaRetiroResult.length>0) {
+        if (actaInstalacionSoporteMovimientoResult.length > 0 || actaRetiroSoporteMovimientoResult.length > 0 || actaSoporteMarquillaResult.length > 0 || actaFachadaCasaResult.length > 0 || actaCuadraCasaRetiroResult.length > 0 || actaFotoCaja.length>0) {
 
           actaSoporteInstalacionMovimiento = actaInstalacionSoporteMovimientoResult[0] || "vacio"
           actaSoporteRetiroMovimiento = actaRetiroSoporteMovimientoResult[0] || "vacio"
           actaSoporteMarquilla = actaSoporteMarquillaResult[0] || "vacio"
 
+          actaFotoCajaAgendas = actaFotoCaja[0] ?? "vacio";
+
           actaFachadaCasa = actaFachadaCasaResult[0] ?? "vacio";
           actaCuadraCasaRetiro = actaCuadraCasaRetiroResult[0] ?? "vacio";
-          
 
-         
 
-            res.status(200).json({
-              actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
-              actaSoporteInstalacionMovimientoMensajeRecha: actaSoporteInstalacionMovimiento.obsActaRecha,
 
-              actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
-              actaSoporteRetiroMovimientoMensajeRecha: actaSoporteRetiroMovimiento.obsActaRecha,
 
-              actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
-              actaSoporteMarquillaMensajeRecha: actaSoporteMarquilla.obsActaRecha,
+          res.status(200).json({
+            actaSoporteInstalacionMovimiento: actaSoporteInstalacionMovimiento.estadoActaMovimiento,
+            actaSoporteInstalacionMovimientoMensajeRecha: actaSoporteInstalacionMovimiento.obsActaRecha,
 
-              actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
-              actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+            actaSoporteRetiroMovimiento: actaSoporteRetiroMovimiento.estadoActaMovimiento,
+            actaSoporteRetiroMovimientoMensajeRecha: actaSoporteRetiroMovimiento.obsActaRecha,
 
-              actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
-              actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha
-            });
+            actaSoporteMarquilla: actaSoporteMarquilla.estadoActaOperaciones,
+            actaSoporteMarquillaMensajeRecha: actaSoporteMarquilla.obsActaRecha,
 
-          
+            actaFachadaCasa: actaFachadaCasa.estadoActaOperaciones,
+            actaFachadaCasaMensajeRecha: actaFachadaCasa.obsActaRecha,
+
+            actaCuadraCasaRetiro: actaCuadraCasaRetiro.estadoActaOperaciones,
+            actaCuadraCasaRetiroMensajeRecha: actaCuadraCasaRetiro.obsActaRecha,
+
+            actaFotoCajaAgendas: actaFotoCajaAgendas.estadoActaOperaciones,
+              actaFotoCajaAgendasMensajeRecha: actaFotoCajaAgendas.obsActaRecha
+          });
+
+
 
 
         } else {
@@ -5090,7 +5140,7 @@ const ObtenerTecnicos = async (req, res) => {
       const [rows] = await pool.query(`SELECT idservicio, tercero.tercerocol,numeroTercero FROM servicio 
       inner join tercero on tercero_idtercero = tercero.idtercero where tipoServicio_idtipoServicio = 4 && estado = 0 `);
 
-     
+
 
       res.status(200).json(rows);
 
@@ -5323,7 +5373,7 @@ const registroExcelAllActivosFijos = async (req, res) => {
           idactivoFijo DESC
       `);
 
-     
+
 
       // Agregar los registros a la hoja de Excel
       rows.forEach((row) => {

@@ -73,6 +73,8 @@ web_modules/
 # Output of 'npm pack'
 *.tgz
 
+guiasinventariobitwan-014a643817e6.json
+
 # Yarn Integrity file
 .yarn-integrity
 
